@@ -100,11 +100,11 @@ export const ModDetail: React.FC<ModDetailProps> = ({
           <h2 className="text-lg font-semibold text-gray-100 mb-3">Images</h2>
           
           {/* Main image */}
-          <div className="mb-3">
+          <div className="mb-3 h-80 bg-gray-800 rounded-lg overflow-hidden">
             <img
               src={mod.images[selectedImageIndex]}
               alt={`${mod.title} screenshot ${selectedImageIndex + 1}`}
-              className="w-full h-64 object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+              className="w-full h-full object-contain cursor-pointer hover:opacity-90 transition-opacity"
               onClick={() => setShowLightbox(true)}
             />
           </div>
@@ -113,17 +113,21 @@ export const ModDetail: React.FC<ModDetailProps> = ({
           {mod.images.length > 1 && (
             <div className="grid grid-cols-4 gap-2">
               {mod.images.map((image, index) => (
-                <img
+                <div
                   key={index}
-                  src={image}
-                  alt={`${mod.title} screenshot ${index + 1}`}
-                  className={`w-full h-16 object-cover rounded cursor-pointer transition-all ${
+                  className={`relative aspect-video rounded cursor-pointer transition-all overflow-hidden ${
                     selectedImageIndex === index
                       ? 'ring-2 ring-primary-500 opacity-100'
                       : 'opacity-60 hover:opacity-80'
                   }`}
                   onClick={() => setSelectedImageIndex(index)}
-                />
+                >
+                  <img
+                    src={image}
+                    alt={`${mod.title} screenshot ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               ))}
             </div>
           )}
@@ -232,7 +236,7 @@ export const ModDetail: React.FC<ModDetailProps> = ({
             <img
               src={mod.images[selectedImageIndex]}
               alt={`${mod.title} screenshot ${selectedImageIndex + 1}`}
-              className="max-w-full max-h-full object-contain"
+              className="max-w-full max-h-full object-contain rounded-lg"
             />
             
             {mod.images.length > 1 && (
