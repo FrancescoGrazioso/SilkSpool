@@ -5,6 +5,9 @@ mod repository;
 mod types;
 mod test_repo;
 
+#[cfg(test)]
+mod tests;
+
 use detect::{get_game_status, validate_game_path, GameStatus};
 use config::{load_config, save_config, add_repo, remove_repo, update_game_path, AppConfig};
 use repository::{
