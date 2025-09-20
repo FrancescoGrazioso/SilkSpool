@@ -106,7 +106,14 @@ export const RepoSelector: React.FC<RepoSelectorProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-medium">{repo.name}</div>
+                    <div className="font-medium flex items-center space-x-2">
+                      <span>{repo.name}</span>
+                      {repo.id === 'built-in' && (
+                        <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">
+                          Built-in
+                        </span>
+                      )}
+                    </div>
                     <div className="text-xs text-gray-400 truncate">{repo.url}</div>
                   </div>
                   <span className="bg-gray-600 text-white text-xs px-2 py-1 rounded-full">

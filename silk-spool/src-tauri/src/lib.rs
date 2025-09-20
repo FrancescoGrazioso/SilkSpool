@@ -3,6 +3,7 @@ mod detect;
 mod config;
 mod repository;
 mod types;
+mod test_repo;
 
 use detect::{get_game_status, validate_game_path, GameStatus};
 use config::{load_config, save_config, add_repo, remove_repo, update_game_path, AppConfig};
@@ -14,6 +15,7 @@ use repository::{
     clear_repository_cache_command,
     clear_all_cache_command
 };
+use test_repo::test_sample_repository;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -65,6 +67,14 @@ async fn update_game_path_command(path: Option<String>) -> Result<(), String> {
     update_game_path(game_path)
 }
 
+#[tauri::command]
+async fn test_repository_command() -> Result<String, String> {
+    match test_sample_repository() {
+        Ok(_) => Ok("Repository test completed successfully!".to_string()),
+        Err(e) => Err(format!("Repository test failed: {}", e))
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -90,7 +100,8 @@ pub fn run() {
             get_cached_repositories_command,
             load_cached_repository_command,
             clear_repository_cache_command,
-            clear_all_cache_command
+            clear_all_cache_command,
+            test_repository_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

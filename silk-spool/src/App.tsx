@@ -59,6 +59,7 @@ function App() {
     setIsAddRepoDialogOpen(true);
   };
 
+
   const handleRepositoryAdded = async (_url: string) => {
     // Refresh repositories and mods
     await loadRepositories();
@@ -67,7 +68,7 @@ function App() {
 
   const loadRepositories = async () => {
     try {
-      const repos = await RepositoryService.getCachedRepositories();
+      const repos = await RepositoryService.getAllRepositories();
       setRepositories(repos);
     } catch (error) {
       console.error('Failed to load repositories:', error);

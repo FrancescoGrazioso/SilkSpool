@@ -96,13 +96,65 @@ export class RepositoryService {
   }
 
   /**
-   * Get all mods from all cached repositories
+   * Load the built-in mods.json repository
+   */
+  static async loadBuiltInRepository(): Promise<Repository | null> {
+    try {
+      const response = await fetch('/mods.json');
+      if (!response.ok) {
+        console.log('No built-in mods.json found');
+        return null;
+      }
+      const repository = await response.json();
+      return repository;
+    } catch (error) {
+      console.log('Failed to load built-in repository:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get all repositories including built-in
+   */
+  static async getAllRepositories(): Promise<RepositoryInfo[]> {
+    try {
+      const cachedRepos = await this.getCachedRepositories();
+      const builtInRepo = await this.loadBuiltInRepository();
+      
+      const allRepos = [...cachedRepos];
+      
+      if (builtInRepo) {
+        allRepos.unshift({
+          id: 'built-in',
+          name: builtInRepo.name,
+          url: '/mods.json',
+          version: builtInRepo.version,
+          mod_count: builtInRepo.mods.length
+        });
+      }
+      
+      return allRepos;
+    } catch (error) {
+      console.error('Failed to get all repositories:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get all mods from all repositories including built-in
    */
   static async getAllMods(): Promise<Mod[]> {
     try {
-      const repositories = await this.getCachedRepositories();
       const allMods: Mod[] = [];
-
+      
+      // Load built-in repository first
+      const builtInRepo = await this.loadBuiltInRepository();
+      if (builtInRepo) {
+        allMods.push(...builtInRepo.mods);
+      }
+      
+      // Load cached repositories
+      const repositories = await this.getCachedRepositories();
       for (const repoInfo of repositories) {
         const repository = await this.loadCachedRepository(repoInfo.id);
         if (repository) {
@@ -122,8 +174,13 @@ export class RepositoryService {
    */
   static async getModsFromRepository(repoId: string): Promise<Mod[]> {
     try {
-      const repository = await this.loadCachedRepository(repoId);
-      return repository ? repository.mods : [];
+      if (repoId === 'built-in') {
+        const repository = await this.loadBuiltInRepository();
+        return repository ? repository.mods : [];
+      } else {
+        const repository = await this.loadCachedRepository(repoId);
+        return repository ? repository.mods : [];
+      }
     } catch (error) {
       console.error(`Failed to get mods from repository ${repoId}:`, error);
       return [];
