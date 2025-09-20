@@ -5,6 +5,7 @@ import { GameStatus, Mod, RepositoryInfo } from "./types";
 import { SearchBar, StatusBar, RepoSelector, ModList, ModDetail, AddRepoDialog, AdvancedFilters } from "./components";
 import { RepositoryService } from "./services/repositoryService";
 import { SearchService } from "./services/searchService";
+import { ImageCacheService } from "./services/imageCacheService";
 import { FilterOptions } from "./components/AdvancedFilters";
 
 function App() {
@@ -108,7 +109,8 @@ function App() {
       
       setMods(mods);
       // Apply current filters and search to the new mods
-      applyFiltersAndSearch(searchQuery, filters);
+      const filtered = SearchService.searchMods(mods, searchQuery, filters);
+      setFilteredMods(filtered);
     } catch (error) {
       console.error('Failed to load mods:', error);
       setMods([]);
@@ -119,6 +121,9 @@ function App() {
   };
 
   useEffect(() => {
+    // Initialize image cache
+    ImageCacheService.initialize();
+
     // Real game detection using Rust backend
     const detectGame = async () => {
       setIsScanning(true);
@@ -145,6 +150,8 @@ function App() {
     const initializeApp = async () => {
       await detectGame();
       await loadRepositories();
+      
+      // Load mods from all repositories by default (activeRepoId = null)
       await loadMods(null);
     };
 

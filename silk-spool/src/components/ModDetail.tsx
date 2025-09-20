@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Mod } from '../types';
+import { ImageGallery } from './ImageGallery';
 
 interface ModDetailProps {
   mod: Mod | null;
@@ -10,8 +11,6 @@ export const ModDetail: React.FC<ModDetailProps> = ({
   mod,
   className = ""
 }) => {
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [showLightbox, setShowLightbox] = useState(false);
 
   if (!mod) {
     return (
@@ -98,39 +97,10 @@ export const ModDetail: React.FC<ModDetailProps> = ({
       {mod.images.length > 0 && (
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-100 mb-3">Images</h2>
-          
-          {/* Main image */}
-          <div className="mb-3 h-80 bg-gray-800 rounded-lg overflow-hidden">
-            <img
-              src={mod.images[selectedImageIndex]}
-              alt={`${mod.title} screenshot ${selectedImageIndex + 1}`}
-              className="w-full h-full object-contain cursor-pointer hover:opacity-90 transition-opacity"
-              onClick={() => setShowLightbox(true)}
-            />
-          </div>
-
-          {/* Thumbnail grid */}
-          {mod.images.length > 1 && (
-            <div className="grid grid-cols-4 gap-2 pl-1">
-              {mod.images.map((image, index) => (
-                <div
-                  key={index}
-                  className={`relative aspect-video rounded cursor-pointer transition-all overflow-hidden ${
-                    selectedImageIndex === index
-                      ? 'ring-2 ring-primary-500 opacity-100'
-                      : 'opacity-60 hover:opacity-80'
-                  }`}
-                  onClick={() => setSelectedImageIndex(index)}
-                >
-                  <img
-                    src={image}
-                    alt={`${mod.title} screenshot ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          <ImageGallery
+            images={mod.images}
+            title={mod.title}
+          />
         </div>
       )}
 
@@ -217,47 +187,6 @@ export const ModDetail: React.FC<ModDetailProps> = ({
         </div>
       )}
 
-      {/* Lightbox */}
-      {showLightbox && mod.images.length > 0 && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50"
-          onClick={() => setShowLightbox(false)}
-        >
-          <div className="relative max-w-4xl max-h-full p-4">
-            <button
-              onClick={() => setShowLightbox(false)}
-              className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
-            >
-              <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            
-            <img
-              src={mod.images[selectedImageIndex]}
-              alt={`${mod.title} screenshot ${selectedImageIndex + 1}`}
-              className="max-w-full max-h-full object-contain rounded-lg"
-            />
-            
-            {mod.images.length > 1 && (
-              <div className="flex justify-center mt-4 space-x-2">
-                {mod.images.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedImageIndex(index);
-                    }}
-                    className={`w-3 h-3 rounded-full ${
-                      selectedImageIndex === index ? 'bg-white' : 'bg-gray-500'
-                    }`}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

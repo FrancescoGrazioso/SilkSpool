@@ -6,3 +6,5 @@ export { ModList } from './ModList';
 export { ModDetail } from './ModDetail';
 export { AddRepoDialog } from './AddRepoDialog';
 export { AdvancedFilters } from './AdvancedFilters';
+export { LazyImage } from './LazyImage';
+export { ImageGallery } from './ImageGallery';
