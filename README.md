@@ -2,9 +2,12 @@
 
 A beautiful, easy-to-use mod manager for Hollow Knight: Silksong. Find, download, and manage your favorite mods with just a few clicks!
 
+
 ![Silk Spool](https://img.shields.io/badge/Status-In%20Development-orange)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-blue)
 ![Game](https://img.shields.io/badge/Game-Hollow%20Knight%3A%20Silksong-purple)
+
+<img width="798" height="506" alt="Screenshot 2025-09-20 alle 21 51 11" src="https://github.com/user-attachments/assets/72ab1a5e-6e04-4808-916f-1046feeaa3f4" />
 
 ## What is Silk Spool?
 
