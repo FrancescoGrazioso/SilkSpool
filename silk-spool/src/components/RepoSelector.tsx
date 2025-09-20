@@ -74,7 +74,7 @@ export const RepoSelector: React.FC<RepoSelectorProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-64 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
+        <div className="absolute top-full left-0 mt-1 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
           <div className="p-2">
             {/* All Repositories Option */}
             <button
