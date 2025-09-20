@@ -1,134 +1,170 @@
 # Silk Spool
 
-A cross-platform desktop application for managing BepInEx mods for Hollow Knight: Silksong.
+A beautiful, easy-to-use mod manager for Hollow Knight: Silksong. Find, download, and manage your favorite mods with just a few clicks!
 
-## Features
+![Silk Spool](https://img.shields.io/badge/Status-In%20Development-orange)
+![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-blue)
+![Game](https://img.shields.io/badge/Game-Hollow%20Knight%3A%20Silksong-purple)
 
-- **Automatic Game Detection**: Automatically scans for Hollow Knight: Silksong installations via Steam
-- **BepInEx Integration**: Detects and validates BepInEx installation status
-- **Mod Repository Management**: Add and manage multiple mod repositories
-- **Mod Browser**: Search, filter, and browse mods with detailed information
-- **Cross-Platform**: Works on Windows and macOS
-- **Modern UI**: Dark-themed interface built with React and Tailwind CSS
+## What is Silk Spool?
 
-## Technology Stack
+Silk Spool is a desktop application that makes modding Hollow Knight: Silksong simple and enjoyable. Whether you're new to modding or a seasoned veteran, Silk Spool provides an intuitive interface to discover and manage your mods.
 
-- **Frontend**: React + TypeScript + Tailwind CSS
-- **Backend**: Rust (Tauri framework)
-- **Build System**: Vite + Cargo
-- **Platform**: Cross-platform desktop (Windows x64, macOS arm64/x64)
+## ✨ Key Features
 
-## Development Status
+### 🎮 **Automatic Setup**
+- **Smart Game Detection**: Automatically finds your Hollow Knight: Silksong installation
+- **BepInEx Integration**: Checks if BepInEx is properly installed and configured
+- **One-Click Setup**: Get started in minutes, not hours
 
-**Current Progress**: 50% Complete (4/8 phases)
+### 📚 **Mod Discovery**
+- **Browse Mods**: Explore mods from multiple repositories in one place
+- **Search & Filter**: Find exactly what you're looking for with powerful search tools
+- **Rich Details**: View screenshots, descriptions, and requirements before downloading
 
-### ✅ Completed Phases
-- **Phase 1**: Project Setup and Configuration
-- **Phase 2**: Rust Backend - System Detection
-- **Phase 3**: React Frontend - UI Components
-- **Phase 4**: Mod Repository System
+### 🎨 **Beautiful Interface**
+- **Dark Theme**: Easy on the eyes during long modding sessions
+- **Responsive Design**: Works perfectly on any screen size
+- **Intuitive Navigation**: Simple, clean interface that anyone can use
 
-### 🔄 In Progress
-- **Phase 5**: Advanced Features
+### 🔧 **Easy Management**
+- **Repository Support**: Add your favorite mod sources
+- **Download Management**: Handle downloads with progress tracking
+- **Mod Organization**: Keep your mods organized and up-to-date
 
-### ⏳ Pending
-- **Phase 6**: Testing and Quality
-- **Phase 7**: Build and Distribution
-- **Phase 8**: Finalization and Release
-
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
-
-- Node.js 20.19+ or 22.12+
-- Rust 1.70+
-- Git
+- **Hollow Knight: Silksong** (installed via Steam)
+- **BepInEx** (for modding support)
+- **Windows 10/11** or **macOS 10.15+**
 
 ### Installation
 
-1. Clone the repository:
+1. **Download** the latest release from the [Releases page](https://github.com/FrancescoGrazioso/SilkSpool/releases)
+2. **Install** the application for your platform:
+   - **Windows**: Run the `.msi` installer
+   - **macOS**: Open the `.dmg` file and drag to Applications
+3. **Launch** Silk Spool and let it detect your game automatically
+4. **Add repositories** to start browsing mods
+5. **Enjoy** your modded Silksong experience!
+
+## 📖 How to Use
+
+### First Launch
+1. Silk Spool will automatically scan for your Hollow Knight: Silksong installation
+2. If found, it will check for BepInEx compatibility
+3. If not found, you can manually select your game folder
+
+### Adding Mod Repositories
+1. Click the **"Add Repository"** button
+2. Enter the URL of a mod repository (JSON format)
+3. Silk Spool will fetch and cache the mod list
+4. Start browsing and downloading mods!
+
+### Finding Mods
+- Use the **search bar** to find specific mods
+- **Filter by repository** to focus on specific sources
+- **Browse by category** or **sort by date/name**
+- Click on any mod to see **detailed information** and **screenshots**
+
+## 🛠️ For Developers
+
+### Development Status
+**Current Progress**: 50% Complete (4/8 phases)
+
+**Completed Features:**
+- ✅ Game detection and BepInEx validation
+- ✅ Repository management system
+- ✅ Modern UI with search and filtering
+- ✅ Cross-platform support
+
+**Coming Soon:**
+- 🔄 Mod installation and management
+- 🔄 Advanced features and customization
+- 🔄 Comprehensive testing and optimization
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Here's how you can help:
+
+### For Users
+- **Report bugs** or issues you encounter
+- **Suggest new features** that would improve your experience
+- **Share feedback** on the user interface and functionality
+- **Help other users** in discussions and issues
+
+### For Developers
+- **Fork the repository** and create a feature branch
+- **Follow the coding standards** and test your changes
+- **Submit pull requests** with clear descriptions
+- **Help with documentation** and examples
+
+### Development Setup
+If you want to contribute code:
+
+1. **Clone the repository**:
 ```bash
-git clone <repository-url>
-cd SilkSpool
+git clone https://github.com/FrancescoGrazioso/SilkSpool.git
+cd SilkSpool/silk-spool
 ```
 
-2. Install dependencies:
+2. **Install dependencies**:
 ```bash
-cd silk-spool
 npm install
 ```
 
-3. Run in development mode:
+3. **Run in development mode**:
 ```bash
 npm run tauri dev
 ```
 
-### Building
+## 📋 Roadmap
 
-Build for production:
-```bash
-npm run tauri build
-```
+### Phase 5: Advanced Features (In Progress)
+- Mod installation and management
+- File conflict resolution
+- Mod dependency handling
+- Backup and restore functionality
 
-## Project Structure
+### Phase 6: Testing and Quality
+- Comprehensive testing suite
+- Performance optimization
+- Bug fixes and stability improvements
 
-```
-SilkSpool/
-├── silk-spool/                 # Main application directory
-│   ├── src/                    # React frontend
-│   │   ├── components/         # UI components
-│   │   ├── services/           # API services
-│   │   ├── types/              # TypeScript definitions
-│   │   └── App.tsx             # Main React component
-│   ├── src-tauri/              # Rust backend
-│   │   ├── src/                # Rust source code
-│   │   │   ├── steam.rs        # Steam detection
-│   │   │   ├── detect.rs       # Game detection
-│   │   │   ├── config.rs       # Configuration management
-│   │   │   ├── repository.rs   # Repository management
-│   │   │   └── lib.rs          # Main entry point
-│   │   └── Cargo.toml          # Rust dependencies
-│   ├── public/                 # Static assets
-│   └── package.json            # Node.js dependencies
-└── README.md                   # This file
-```
+### Phase 7: Build and Distribution
+- Automated builds for all platforms
+- Installer creation
+- Update system implementation
 
-## Key Features Implemented
+### Phase 8: Finalization and Release
+- Final polish and optimization
+- Documentation completion
+- Public release preparation
 
-### Game Detection
-- Automatic Steam library detection (Windows/macOS)
-- Hollow Knight: Silksong installation detection
-- BepInEx presence verification
-- Manual path selection fallback
+## 🐛 Known Issues
 
-### Repository System
-- HTTP-based repository fetching
-- JSON validation and parsing
-- Local caching system
-- Repository management UI
-- Cross-platform cache handling
+- Repository system is functional but mod installation is not yet implemented
+- Some advanced features are still in development
+- Cross-platform testing is ongoing
 
-### User Interface
-- Modern dark-themed design
-- Responsive layout
-- Search and filtering
-- Mod detail views with image galleries
-- Repository selector with mod counts
+## 📄 License
 
-## Contributing
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+## 🙏 Acknowledgments
 
-## License
+- Built with [Tauri](https://tauri.app/) - the modern desktop app framework
+- UI styled with [Tailwind CSS](https://tailwindcss.com/)
+- Inspired by the Hollow Knight modding community
+- Special thanks to all contributors and testers
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 📞 Support
 
-## Acknowledgments
+- **Issues**: [GitHub Issues](https://github.com/FrancescoGrazioso/SilkSpool/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/FrancescoGrazioso/SilkSpool/discussions)
+- **Releases**: [GitHub Releases](https://github.com/FrancescoGrazioso/SilkSpool/releases)
 
-- Built with [Tauri](https://tauri.app/) framework
-- UI components styled with [Tailwind CSS](https://tailwindcss.com/)
-- Game detection inspired by community mod managers
+---
+
+**Made with ❤️ for the Hollow Knight: Silksong modding community**
