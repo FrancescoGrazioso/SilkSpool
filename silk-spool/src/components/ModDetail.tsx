@@ -111,7 +111,7 @@ export const ModDetail: React.FC<ModDetailProps> = ({
 
           {/* Thumbnail grid */}
           {mod.images.length > 1 && (
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-2 pl-1">
               {mod.images.map((image, index) => (
                 <div
                   key={index}
