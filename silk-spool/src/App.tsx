@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 import { GameStatus, Mod, RepositoryInfo } from "./types";
-import { SearchBar, StatusBar, RepoSelector, ModList, ModDetail, AddRepoDialog } from "./components";
+import { SearchBar, StatusBar, RepoSelector, ModList, ModDetail, AddRepoDialog, AdvancedFilters } from "./components";
 import { RepositoryService } from "./services/repositoryService";
+import { SearchService } from "./services/searchService";
+import { FilterOptions } from "./components/AdvancedFilters";
 
 function App() {
   const [gameStatus, setGameStatus] = useState<GameStatus>({
@@ -21,9 +23,16 @@ function App() {
   const [selectedMod, setSelectedMod] = useState<Mod | null>(null);
   const [activeRepoId, setActiveRepoId] = useState<string | null>(null);
   const [mods, setMods] = useState<Mod[]>([]);
+  const [filteredMods, setFilteredMods] = useState<Mod[]>([]);
   const [repositories, setRepositories] = useState<RepositoryInfo[]>([]);
   const [isAddRepoDialogOpen, setIsAddRepoDialogOpen] = useState(false);
   const [isLoadingMods, setIsLoadingMods] = useState(false);
+  const [filters, setFilters] = useState<FilterOptions>({
+    requirements: [],
+    authors: [],
+    sortBy: 'date',
+    sortOrder: 'desc'
+  });
 
   const handleSelectGameFolder = async () => {
     try {
@@ -44,6 +53,17 @@ function App() {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
+    applyFiltersAndSearch(query, filters);
+  };
+
+  const handleFiltersChange = (newFilters: FilterOptions) => {
+    setFilters(newFilters);
+    applyFiltersAndSearch(searchQuery, newFilters);
+  };
+
+  const applyFiltersAndSearch = (query: string, filterOptions: FilterOptions) => {
+    const filtered = SearchService.searchMods(mods, query, filterOptions);
+    setFilteredMods(filtered);
   };
 
   const handleModSelect = (mod: Mod) => {
@@ -87,9 +107,12 @@ function App() {
       }
       
       setMods(mods);
+      // Apply current filters and search to the new mods
+      applyFiltersAndSearch(searchQuery, filters);
     } catch (error) {
       console.error('Failed to load mods:', error);
       setMods([]);
+      setFilteredMods([]);
     } finally {
       setIsLoadingMods(false);
     }
@@ -158,12 +181,21 @@ function App() {
               placeholder="Search mods..."
             />
             
-            <RepoSelector
-              repositories={repositories}
-              activeRepoId={activeRepoId}
-              onRepoSelect={handleRepoSelect}
-              onAddRepo={handleAddRepo}
-            />
+            <div className="flex space-x-2">
+              <RepoSelector
+                repositories={repositories}
+                activeRepoId={activeRepoId}
+                onRepoSelect={handleRepoSelect}
+                onAddRepo={handleAddRepo}
+                className="flex-1"
+              />
+              
+              <AdvancedFilters
+                onFiltersChange={handleFiltersChange}
+                availableRequirements={SearchService.getUniqueRequirements(mods)}
+                availableAuthors={SearchService.getUniqueAuthors(mods)}
+              />
+            </div>
           </div>
           
           {/* Mod List */}
@@ -177,7 +209,7 @@ function App() {
               </div>
             ) : (
               <ModList
-                mods={mods}
+                mods={filteredMods}
                 selectedModId={selectedMod?.id || null}
                 onModSelect={handleModSelect}
                 searchQuery={searchQuery}

@@ -1,23 +1,44 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
   placeholder?: string;
   className?: string;
+  debounceMs?: number;
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
   onSearch,
   placeholder = "Search mods...",
-  className = ""
+  className = "",
+  debounceMs = 300
 }) => {
   const [query, setQuery] = useState('');
+  const debounceRef = useRef<number | undefined>(undefined);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
-    onSearch(value);
-  }, [onSearch]);
+    
+    // Clear previous timeout
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    
+    // Set new timeout for debounced search
+    debounceRef.current = window.setTimeout(() => {
+      onSearch(value);
+    }, debounceMs);
+  }, [onSearch, debounceMs]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
 
   const handleClear = useCallback(() => {
     setQuery('');

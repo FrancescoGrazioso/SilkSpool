@@ -5,3 +5,4 @@ export { ModItem } from './ModItem';
 export { ModList } from './ModList';
 export { ModDetail } from './ModDetail';
 export { AddRepoDialog } from './AddRepoDialog';
+export { AdvancedFilters } from './AdvancedFilters';
