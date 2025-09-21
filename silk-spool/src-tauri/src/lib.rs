@@ -4,6 +4,7 @@ mod config;
 mod repository;
 mod types;
 mod test_repo;
+mod installer;
 
 #[cfg(test)]
 mod tests;
@@ -19,6 +20,8 @@ use repository::{
     clear_all_cache_command
 };
 use test_repo::test_sample_repository;
+use installer::{install_mod, uninstall_mod, list_installed_mods};
+use crate::types::InstallResult;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -78,6 +81,36 @@ async fn test_repository_command() -> Result<String, String> {
     }
 }
 
+/// Install a mod from download URL
+#[tauri::command]
+async fn install_mod_command(
+    download_url: String,
+    game_path: String,
+    mod_name: String,
+) -> Result<InstallResult, String> {
+    let game_path = std::path::Path::new(&game_path);
+    install_mod(&download_url, game_path, &mod_name).await
+}
+
+/// Uninstall a mod
+#[tauri::command]
+async fn uninstall_mod_command(
+    game_path: String,
+    mod_name: String,
+) -> Result<InstallResult, String> {
+    let game_path = std::path::Path::new(&game_path);
+    uninstall_mod(game_path, &mod_name)
+}
+
+/// List installed mods
+#[tauri::command]
+async fn list_installed_mods_command(
+    game_path: String,
+) -> Result<Vec<String>, String> {
+    let game_path = std::path::Path::new(&game_path);
+    list_installed_mods(game_path)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -104,7 +137,10 @@ pub fn run() {
             load_cached_repository_command,
             clear_repository_cache_command,
             clear_all_cache_command,
-            test_repository_command
+            test_repository_command,
+            install_mod_command,
+            uninstall_mod_command,
+            list_installed_mods_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

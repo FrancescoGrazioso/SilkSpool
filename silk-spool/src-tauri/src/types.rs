@@ -53,3 +53,10 @@ pub struct AppConfig {
 pub struct UiConfig {
     pub dark_mode: bool,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InstallResult {
+    pub success: bool,
+    pub message: String,
+    pub installed_files: Vec<String>,
+}

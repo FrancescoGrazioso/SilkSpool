@@ -1,16 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Mod } from '../types';
 import { ImageGallery } from './ImageGallery';
+import { openUrl } from '@tauri-apps/plugin-opener';
+import { InstallerService } from '../services/installerService';
 
 interface ModDetailProps {
   mod: Mod | null;
+  gamePath: string | null;
   className?: string;
 }
 
 export const ModDetail: React.FC<ModDetailProps> = ({
   mod,
+  gamePath,
   className = ""
 }) => {
+  const [loadingDownload, setLoadingDownload] = useState<string | null>(null);
+  const [loadingHomepage, setLoadingHomepage] = useState(false);
 
   if (!mod) {
     return (
@@ -51,14 +57,39 @@ export const ModDetail: React.FC<ModDetailProps> = ({
     }
   };
 
-  const handleDownload = (downloadUrl: string) => {
-    // Open download URL in browser
-    window.open(downloadUrl, '_blank');
+  const handleDownload = async (downloadUrl: string, downloadLabel: string) => {
+    if (!gamePath) {
+      return;
+    }
+
+    setLoadingDownload(downloadLabel);
+    try {
+      // Install the mod using the installer service (notifications are handled by the service)
+      await InstallerService.installMod(
+        downloadUrl,
+        gamePath,
+        mod.id
+      );
+    } catch (error) {
+      console.error('Failed to install mod:', error);
+    } finally {
+      setLoadingDownload(null);
+    }
   };
 
-  const handleHomepageClick = () => {
+  const handleHomepageClick = async () => {
     if (mod.homepage) {
-      window.open(mod.homepage, '_blank');
+      setLoadingHomepage(true);
+      try {
+        // Open homepage URL in browser using Tauri
+        await openUrl(mod.homepage);
+      } catch (error) {
+        console.error('Failed to open homepage URL:', error);
+        // Fallback to window.open if Tauri fails
+        window.open(mod.homepage, '_blank');
+      } finally {
+        setLoadingHomepage(false);
+      }
     }
   };
 
@@ -136,28 +167,54 @@ export const ModDetail: React.FC<ModDetailProps> = ({
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-100 mb-3">Downloads</h2>
           <div className="space-y-2">
-            {mod.downloads.map((download, index) => (
-              <button
-                key={index}
-                onClick={() => handleDownload(download.url)}
-                className="w-full bg-primary-600 hover:bg-primary-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-between"
-              >
-                <span className="font-medium">{download.label}</span>
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+            {mod.downloads.map((download, index) => {
+              const isLoading = loadingDownload === download.label;
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleDownload(download.url, download.label)}
+                  disabled={isLoading}
+                  className={`w-full px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-between ${
+                    isLoading
+                      ? 'bg-primary-500 cursor-not-allowed'
+                      : 'bg-primary-600 hover:bg-primary-700'
+                  } text-white`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-              </button>
-            ))}
+                  <span className="font-medium">
+                    {isLoading ? 'Installing...' : download.label}
+                  </span>
+                  {isLoading ? (
+                    <svg
+                      className="h-5 w-5 animate-spin"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -167,22 +224,45 @@ export const ModDetail: React.FC<ModDetailProps> = ({
         <div className="mb-6">
           <button
             onClick={handleHomepageClick}
-            className="w-full bg-gray-700 hover:bg-gray-600 text-gray-100 px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-between"
+            disabled={loadingHomepage}
+            className={`w-full px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-between ${
+              loadingHomepage
+                ? 'bg-gray-600 cursor-not-allowed'
+                : 'bg-gray-700 hover:bg-gray-600'
+            } text-gray-100`}
           >
-            <span className="font-medium">Visit Homepage</span>
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-              />
-            </svg>
+            <span className="font-medium">
+              {loadingHomepage ? 'Opening...' : 'Visit Homepage'}
+            </span>
+            {loadingHomepage ? (
+              <svg
+                className="h-5 w-5 animate-spin"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            )}
           </button>
         </div>
       )}

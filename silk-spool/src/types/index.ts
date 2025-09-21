@@ -96,3 +96,9 @@ export interface GameState {
   isScanning: boolean;
   lastScanTime: Date | null;
 }
+
+export interface InstallResult {
+  success: boolean;
+  message: string;
+  installed_files: string[];
+}

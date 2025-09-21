@@ -8,3 +8,4 @@ export { AddRepoDialog } from './AddRepoDialog';
 export { AdvancedFilters } from './AdvancedFilters';
 export { LazyImage } from './LazyImage';
 export { ImageGallery } from './ImageGallery';
+export { NotificationContainer } from './NotificationContainer';

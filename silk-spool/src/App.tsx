@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 import { GameStatus, Mod, RepositoryInfo } from "./types";
-import { SearchBar, StatusBar, RepoSelector, ModList, ModDetail, AddRepoDialog, AdvancedFilters } from "./components";
+import { SearchBar, StatusBar, RepoSelector, ModList, ModDetail, AddRepoDialog, AdvancedFilters, NotificationContainer } from "./components";
 import { RepositoryService } from "./services/repositoryService";
 import { SearchService } from "./services/searchService";
 import { ImageCacheService } from "./services/imageCacheService";
@@ -238,6 +238,7 @@ function App() {
           ) : (
             <ModDetail 
               mod={selectedMod}
+              gamePath={gameStatus.path}
               className="h-full"
             />
           )}
@@ -250,6 +251,9 @@ function App() {
         onClose={() => setIsAddRepoDialogOpen(false)}
         onRepositoryAdded={handleRepositoryAdded}
       />
+
+      {/* Notification Container */}
+      <NotificationContainer />
     </div>
   );
 }
