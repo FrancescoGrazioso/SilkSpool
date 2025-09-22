@@ -81,6 +81,7 @@ export interface SearchFilters {
   authors: string[];
   sortBy: 'name' | 'date' | 'relevance';
   sortOrder: 'asc' | 'desc';
+  installedOnly?: boolean;
 }
 
 export interface UIState {
@@ -101,4 +102,20 @@ export interface InstallResult {
   success: boolean;
   message: string;
   installed_files: string[];
+  modFolderName?: string;
+}
+
+export interface InstalledMod {
+  modId: string;
+  modTitle: string;
+  version: string;
+  installedAt: string;
+  installedFiles: string[];
+  gamePath: string;
+  downloadUrl?: string;
+}
+
+export interface InstalledModsData {
+  mods: InstalledMod[];
+  lastUpdated: string;
 }

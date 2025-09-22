@@ -6,6 +6,7 @@ import { SearchBar, StatusBar, RepoSelector, ModList, ModDetail, AddRepoDialog, 
 import { RepositoryService } from "./services/repositoryService";
 import { SearchService } from "./services/searchService";
 import { ImageCacheService } from "./services/imageCacheService";
+import { installedModsService } from "./services/installedModsService";
 import { FilterOptions } from "./components/AdvancedFilters";
 
 function App() {
@@ -123,6 +124,9 @@ function App() {
   useEffect(() => {
     // Initialize image cache
     ImageCacheService.initialize();
+    
+    // Initialize installed mods service
+    installedModsService.loadInstalledMods();
 
     // Real game detection using Rust backend
     const detectGame = async () => {

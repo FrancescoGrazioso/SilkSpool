@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mod } from '../types';
 import { ImageGallery } from './ImageGallery';
 import { openUrl } from '@tauri-apps/plugin-opener';
 import { InstallerService } from '../services/installerService';
+import { installedModsService } from '../services/installedModsService';
 
 interface ModDetailProps {
   mod: Mod | null;
@@ -17,6 +18,20 @@ export const ModDetail: React.FC<ModDetailProps> = ({
 }) => {
   const [loadingDownload, setLoadingDownload] = useState<string | null>(null);
   const [loadingHomepage, setLoadingHomepage] = useState(false);
+  const [loadingUninstall, setLoadingUninstall] = useState(false);
+  const [installedMods, setInstalledMods] = useState<string[]>([]);
+
+  // Listen to installed mods changes
+  useEffect(() => {
+    const unsubscribe = installedModsService.subscribe((mods) => {
+      setInstalledMods(mods.map(m => m.modId));
+    });
+
+    // Load initial state
+    setInstalledMods(installedModsService.getInstalledMods().map(m => m.modId));
+
+    return unsubscribe;
+  }, []);
 
   if (!mod) {
     return (
@@ -68,7 +83,8 @@ export const ModDetail: React.FC<ModDetailProps> = ({
       await InstallerService.installMod(
         downloadUrl,
         gamePath,
-        mod.id
+        mod,
+        downloadLabel
       );
     } catch (error) {
       console.error('Failed to install mod:', error);
@@ -90,6 +106,30 @@ export const ModDetail: React.FC<ModDetailProps> = ({
       } finally {
         setLoadingHomepage(false);
       }
+    }
+  };
+
+  const handleUninstall = async () => {
+    if (!gamePath || !mod) {
+      return;
+    }
+
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `Are you sure you want to uninstall "${mod.title}"?\n\nThis will remove all mod files from the BepInEx plugins folder.`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setLoadingUninstall(true);
+    try {
+      await InstallerService.uninstallMod(gamePath, mod);
+    } catch (error) {
+      console.error('Failed to uninstall mod:', error);
+    } finally {
+      setLoadingUninstall(false);
     }
   };
 
@@ -216,6 +256,54 @@ export const ModDetail: React.FC<ModDetailProps> = ({
               );
             })}
           </div>
+        </div>
+      )}
+
+      {/* Uninstall Button */}
+      {installedMods.includes(mod.id) && (
+        <div className="mb-6">
+          <button
+            onClick={handleUninstall}
+            disabled={loadingUninstall}
+            className={`w-full px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-between ${
+              loadingUninstall
+                ? 'bg-red-500 cursor-not-allowed'
+                : 'bg-red-600 hover:bg-red-700'
+            } text-white`}
+          >
+            <span className="font-medium">
+              {loadingUninstall ? 'Uninstalling...' : 'Uninstall Mod'}
+            </span>
+            {loadingUninstall ? (
+              <svg
+                className="h-5 w-5 animate-spin"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+            )}
+          </button>
         </div>
       )}
 

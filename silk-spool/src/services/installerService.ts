@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
-import { InstallResult } from '../types';
+import { InstallResult, Mod } from '../types';
 import { notificationService } from './notificationService';
+import { installedModsService } from './installedModsService';
 
 export class InstallerService {
   /**
@@ -9,12 +10,13 @@ export class InstallerService {
   static async installMod(
     downloadUrl: string,
     gamePath: string,
-    modName: string
+    mod: Mod,
+    downloadLabel?: string
   ): Promise<InstallResult> {
     // Show initial notification
     const notificationId = notificationService.progress(
       'Installing Mod',
-      `Starting installation of ${modName}...`,
+      `Starting installation of ${mod.title}...`,
       0
     );
 
@@ -26,18 +28,38 @@ export class InstallerService {
       const result = await invoke<InstallResult>('install_mod_command', {
         downloadUrl,
         gamePath,
-        modName,
+        modName: mod.title,
       });
 
       if (result.success) {
         // Update progress to completion
         notificationService.updateProgress(notificationId, 100);
         
+        // Extract version from download label or use game_version as fallback
+        let modVersion = mod.game_version; // Default fallback
+        if (downloadLabel) {
+          // Try to extract version from download label (e.g., "Download v2.0.2" -> "2.0.2")
+          const versionMatch = downloadLabel.match(/v?(\d+\.\d+\.\d+)/i);
+          if (versionMatch) {
+            modVersion = versionMatch[1];
+          }
+        }
+
+        // Track the installed mod
+        await installedModsService.addInstalledMod(
+          mod.id,
+          mod.title,
+          modVersion,
+          result.installed_files,
+          gamePath,
+          downloadUrl
+        );
+        
         // Dismiss progress notification and show success
         notificationService.dismiss(notificationId);
         notificationService.success(
           'Installation Complete',
-          `Successfully installed ${modName}. ${result.message}`,
+          `Successfully installed ${mod.title}. ${result.message}`,
           5000
         );
       } else {
@@ -45,7 +67,7 @@ export class InstallerService {
         notificationService.dismiss(notificationId);
         notificationService.error(
           'Installation Failed',
-          `Failed to install ${modName}: ${result.message}`
+          `Failed to install ${mod.title}: ${result.message}`
         );
       }
 
@@ -57,7 +79,7 @@ export class InstallerService {
       notificationService.dismiss(notificationId);
       notificationService.error(
         'Installation Failed',
-        `Failed to install ${modName}: ${error}`
+        `Failed to install ${mod.title}: ${error}`
       );
 
       return {
@@ -73,24 +95,34 @@ export class InstallerService {
    */
   static async uninstallMod(
     gamePath: string,
-    modName: string
+    mod: Mod
   ): Promise<InstallResult> {
     try {
+      // Get the installed mod info to find the folder name
+      const installedMod = installedModsService.getInstalledMod(mod.id);
+      if (!installedMod) {
+        throw new Error('Mod not found in installed mods list');
+      }
+      
+      // Use the mod title as folder name (same as installation)
       const result = await invoke<InstallResult>('uninstall_mod_command', {
         gamePath,
-        modName,
+        modName: mod.title,
       });
 
       if (result.success) {
+        // Remove from installed mods tracking
+        await installedModsService.removeInstalledMod(mod.id);
+        
         notificationService.success(
           'Uninstallation Complete',
-          `Successfully uninstalled ${modName}`,
+          `Successfully uninstalled ${mod.title}`,
           3000
         );
       } else {
         notificationService.error(
           'Uninstallation Failed',
-          `Failed to uninstall ${modName}: ${result.message}`
+          `Failed to uninstall ${mod.title}: ${result.message}`
         );
       }
 
@@ -99,7 +131,7 @@ export class InstallerService {
       console.error('Failed to uninstall mod:', error);
       notificationService.error(
         'Uninstallation Failed',
-        `Failed to uninstall ${modName}: ${error}`
+        `Failed to uninstall ${mod.title}: ${error}`
       );
       return {
         success: false,

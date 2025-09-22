@@ -198,6 +198,7 @@ pub async fn install_mod(
         success: true,
         message: format!("Successfully installed {} files", extracted_files.len()),
         installed_files: extracted_files,
+        mod_folder_name: Some(mod_name.to_string()),
     })
 }
 
@@ -211,6 +212,7 @@ pub fn uninstall_mod(game_path: &Path, mod_name: &str) -> Result<InstallResult, 
             success: false,
             message: "Mod not found".to_string(),
             installed_files: vec![],
+            mod_folder_name: Some(mod_name.to_string()),
         });
     }
     
@@ -221,6 +223,7 @@ pub fn uninstall_mod(game_path: &Path, mod_name: &str) -> Result<InstallResult, 
         success: true,
         message: "Mod uninstalled successfully".to_string(),
         installed_files: vec![],
+        mod_folder_name: Some(mod_name.to_string()),
     })
 }
 

@@ -5,6 +5,7 @@ mod repository;
 mod types;
 mod test_repo;
 mod installer;
+mod installed_mods;
 
 #[cfg(test)]
 mod tests;
@@ -21,7 +22,12 @@ use repository::{
 };
 use test_repo::test_sample_repository;
 use installer::{install_mod, uninstall_mod, list_installed_mods};
-use crate::types::InstallResult;
+use installed_mods::{
+    load_installed_mods, save_installed_mods, add_installed_mod, remove_installed_mod,
+    get_installed_mod, is_mod_installed, get_all_installed_mods, update_mod_version,
+    clear_all_installed_mods, get_installed_mods_count
+};
+use crate::types::{InstallResult, InstalledModsData, InstalledMod};
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -111,6 +117,77 @@ async fn list_installed_mods_command(
     list_installed_mods(game_path)
 }
 
+/// Get installed mods data
+#[tauri::command]
+async fn get_installed_mods() -> Result<InstalledModsData, String> {
+    load_installed_mods()
+}
+
+/// Save installed mods data
+#[tauri::command]
+async fn save_installed_mods_command(data: InstalledModsData) -> Result<(), String> {
+    save_installed_mods(&data)
+}
+
+/// Add installed mod
+#[tauri::command]
+async fn add_installed_mod_command(
+    mod_id: String,
+    mod_title: String,
+    version: String,
+    installed_files: Vec<String>,
+    game_path: String,
+    download_url: Option<String>,
+) -> Result<(), String> {
+    add_installed_mod(mod_id, mod_title, version, installed_files, game_path, download_url)
+}
+
+/// Remove installed mod
+#[tauri::command]
+async fn remove_installed_mod_command(mod_id: String) -> Result<(), String> {
+    remove_installed_mod(&mod_id)
+}
+
+/// Get installed mod info
+#[tauri::command]
+async fn get_installed_mod_command(mod_id: String) -> Result<Option<InstalledMod>, String> {
+    get_installed_mod(&mod_id)
+}
+
+/// Check if mod is installed
+#[tauri::command]
+async fn is_mod_installed_command(mod_id: String) -> Result<bool, String> {
+    is_mod_installed(&mod_id)
+}
+
+/// Get all installed mods
+#[tauri::command]
+async fn get_all_installed_mods_command() -> Result<Vec<InstalledMod>, String> {
+    get_all_installed_mods()
+}
+
+/// Update mod version
+#[tauri::command]
+async fn update_mod_version_command(
+    mod_id: String,
+    new_version: String,
+    new_installed_files: Vec<String>,
+) -> Result<(), String> {
+    update_mod_version(&mod_id, new_version, new_installed_files)
+}
+
+/// Clear all installed mods
+#[tauri::command]
+async fn clear_all_installed_mods_command() -> Result<(), String> {
+    clear_all_installed_mods()
+}
+
+/// Get installed mods count
+#[tauri::command]
+async fn get_installed_mods_count_command() -> Result<usize, String> {
+    get_installed_mods_count()
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -140,7 +217,17 @@ pub fn run() {
             test_repository_command,
             install_mod_command,
             uninstall_mod_command,
-            list_installed_mods_command
+            list_installed_mods_command,
+            get_installed_mods,
+            save_installed_mods_command,
+            add_installed_mod_command,
+            remove_installed_mod_command,
+            get_installed_mod_command,
+            is_mod_installed_command,
+            get_all_installed_mods_command,
+            update_mod_version_command,
+            clear_all_installed_mods_command,
+            get_installed_mods_count_command
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -5,6 +5,7 @@ export interface FilterOptions {
   authors: string[];
   sortBy: 'name' | 'date' | 'relevance';
   sortOrder: 'asc' | 'desc';
+  installedOnly?: boolean;
 }
 
 interface AdvancedFiltersProps {
@@ -25,7 +26,8 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
     requirements: [],
     authors: [],
     sortBy: 'date',
-    sortOrder: 'desc'
+    sortOrder: 'desc',
+    installedOnly: false
   });
 
   const handleRequirementToggle = (requirement: string) => {
@@ -60,18 +62,25 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
     onFiltersChange(newFilters);
   };
 
+  const handleInstalledToggle = () => {
+    const newFilters = { ...filters, installedOnly: !filters.installedOnly };
+    setFilters(newFilters);
+    onFiltersChange(newFilters);
+  };
+
   const clearFilters = () => {
     const newFilters: FilterOptions = {
       requirements: [],
       authors: [],
       sortBy: 'date',
-      sortOrder: 'desc'
+      sortOrder: 'desc',
+      installedOnly: false
     };
     setFilters(newFilters);
     onFiltersChange(newFilters);
   };
 
-  const hasActiveFilters = filters.requirements.length > 0 || filters.authors.length > 0;
+  const hasActiveFilters = filters.requirements.length > 0 || filters.authors.length > 0 || filters.installedOnly;
 
   return (
     <div className={`relative ${className}`}>
@@ -95,7 +104,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
         <span className="text-sm">Filters</span>
         {hasActiveFilters && (
           <span className="bg-primary-600 text-white text-xs px-2 py-1 rounded-full">
-            {filters.requirements.length + filters.authors.length}
+            {filters.requirements.length + filters.authors.length + (filters.installedOnly ? 1 : 0)}
           </span>
         )}
         <svg
@@ -116,6 +125,20 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
       {isOpen && (
         <div className="absolute top-full left-0 mt-1 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
           <div className="p-4 space-y-4">
+            {/* Installed Filter */}
+            <div>
+              <h3 className="text-sm font-medium text-gray-300 mb-2">Status</h3>
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={filters.installedOnly}
+                  onChange={handleInstalledToggle}
+                  className="rounded border-gray-600 bg-gray-700 text-primary-600 focus:ring-primary-500"
+                />
+                <span className="text-sm text-gray-300">Show only installed mods</span>
+              </label>
+            </div>
+
             {/* Sort Options */}
             <div>
               <h3 className="text-sm font-medium text-gray-300 mb-2">Sort By</h3>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Mod } from '../types';
+import { installedModsService } from '../services/installedModsService';
 
 interface ModItemProps {
   mod: Mod;
@@ -36,11 +37,18 @@ export const ModItem: React.FC<ModItemProps> = ({
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-2">
-        <h3 className={`font-semibold text-sm leading-tight ${
-          isSelected ? 'text-white' : 'text-gray-100'
-        }`}>
-          {mod.title}
-        </h3>
+        <div className="flex items-center justify-between mb-1">
+          <h3 className={`font-semibold text-sm leading-tight ${
+            isSelected ? 'text-white' : 'text-gray-100'
+          }`}>
+            {mod.title}
+          </h3>
+          {installedModsService.isModInstalled(mod.id) && (
+            <span className="text-xs px-2 py-1 rounded-full bg-green-600 text-white">
+              Installed
+            </span>
+          )}
+        </div>
         <span className={`text-xs px-2 py-1 rounded-full ${
           isSelected 
             ? 'bg-primary-500 text-white' 

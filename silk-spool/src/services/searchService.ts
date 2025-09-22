@@ -1,5 +1,6 @@
 import { Mod } from '../types';
 import { FilterOptions } from '../components/AdvancedFilters';
+import { installedModsService } from './installedModsService';
 
 export class SearchService {
   /**
@@ -36,6 +37,13 @@ export class SearchService {
             modAuthor.toLowerCase().includes(author.toLowerCase())
           )
         )
+      );
+    }
+
+    // Apply installed filter
+    if (filters.installedOnly) {
+      results = results.filter(mod =>
+        installedModsService.isModInstalled(mod.id)
       );
     }
 

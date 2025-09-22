@@ -59,4 +59,30 @@ pub struct InstallResult {
     pub success: bool,
     pub message: String,
     pub installed_files: Vec<String>,
+    #[serde(rename = "modFolderName")]
+    pub mod_folder_name: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InstalledMod {
+    #[serde(rename = "modId")]
+    pub mod_id: String,
+    #[serde(rename = "modTitle")]
+    pub mod_title: String,
+    pub version: String,
+    #[serde(rename = "installedAt")]
+    pub installed_at: String,
+    #[serde(rename = "installedFiles")]
+    pub installed_files: Vec<String>,
+    #[serde(rename = "gamePath")]
+    pub game_path: String,
+    #[serde(rename = "downloadUrl")]
+    pub download_url: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InstalledModsData {
+    pub mods: Vec<InstalledMod>,
+    #[serde(rename = "lastUpdated")]
+    pub last_updated: String,
 }

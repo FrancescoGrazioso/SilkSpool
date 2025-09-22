@@ -2,7 +2,7 @@ import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 
 // Mock Tauri API
-global.__TAURI__ = {
+(global as any).__TAURI__ = {
   invoke: vi.fn(),
   event: {
     listen: vi.fn(),
@@ -33,7 +33,7 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 // Mock IntersectionObserver
-global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+(global as any).IntersectionObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
