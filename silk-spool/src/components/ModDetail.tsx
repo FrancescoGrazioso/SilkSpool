@@ -114,15 +114,6 @@ export const ModDetail: React.FC<ModDetailProps> = ({
       return;
     }
 
-    // Show confirmation dialog
-    const confirmed = window.confirm(
-      `Are you sure you want to uninstall "${mod.title}"?\n\nThis will remove all mod files from the BepInEx plugins folder.`
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
     setLoadingUninstall(true);
     try {
       await InstallerService.uninstallMod(gamePath, mod);
