@@ -63,9 +63,9 @@ jobs:
           
           **Thank you for trying Silk Spool!** 🎮✨
         files: |
-          artifacts/*/*.dmg
-          artifacts/*/*.msi
-          artifacts/*/*.app
+          silk-spool-*/dmg/*.dmg
+          silk-spool-*/msi/*.msi
+          silk-spool-*/macos/*.app
         prerelease: ${{ github.event.inputs.prerelease }}
         draft: false
       env:
