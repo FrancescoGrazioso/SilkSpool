@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Mod } from '../types';
 import { ImageGallery } from './ImageGallery';
 import { openUrl } from '@tauri-apps/plugin-opener';
 import { InstallerService } from '../services/installerService';
-import { installedModsService } from '../services/installedModsService';
+import { useIsModInstalled } from '../hooks/useInstalledMods';
 
 interface ModDetailProps {
   mod: Mod | null;
@@ -19,19 +19,9 @@ export const ModDetail: React.FC<ModDetailProps> = ({
   const [loadingDownload, setLoadingDownload] = useState<string | null>(null);
   const [loadingHomepage, setLoadingHomepage] = useState(false);
   const [loadingUninstall, setLoadingUninstall] = useState(false);
-  const [installedMods, setInstalledMods] = useState<string[]>([]);
-
-  // Listen to installed mods changes
-  useEffect(() => {
-    const unsubscribe = installedModsService.subscribe((mods) => {
-      setInstalledMods(mods.map(m => m.modId));
-    });
-
-    // Load initial state
-    setInstalledMods(installedModsService.getInstalledMods().map(m => m.modId));
-
-    return unsubscribe;
-  }, []);
+  
+  // Always call hooks at the top level
+  const isInstalled = useIsModInstalled(mod?.id || '');
 
   if (!mod) {
     return (
@@ -194,7 +184,7 @@ export const ModDetail: React.FC<ModDetailProps> = ({
       )}
 
       {/* Downloads */}
-      {mod.downloads.length > 0 && (
+      {mod.downloads.length > 0 && !isInstalled && (
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-100 mb-3">Downloads</h2>
           <div className="space-y-2">
@@ -251,7 +241,7 @@ export const ModDetail: React.FC<ModDetailProps> = ({
       )}
 
       {/* Uninstall Button */}
-      {installedMods.includes(mod.id) && (
+      {isInstalled && (
         <div className="mb-6">
           <button
             onClick={handleUninstall}

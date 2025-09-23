@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mod } from '../types';
-import { installedModsService } from '../services/installedModsService';
+import { useIsModInstalled } from '../hooks/useInstalledMods';
 
 interface ModItemProps {
   mod: Mod;
@@ -13,6 +13,7 @@ export const ModItem: React.FC<ModItemProps> = ({
   isSelected,
   onClick
 }) => {
+  const isInstalled = useIsModInstalled(mod.id);
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -43,7 +44,7 @@ export const ModItem: React.FC<ModItemProps> = ({
           }`}>
             {mod.title}
           </h3>
-          {installedModsService.isModInstalled(mod.id) && (
+          {isInstalled && (
             <span className="text-xs px-2 py-1 rounded-full bg-green-600 text-white">
               Installed
             </span>
