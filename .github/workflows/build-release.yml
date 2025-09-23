@@ -56,41 +56,16 @@ jobs:
         npm run build
 
     - name: Build Tauri app
-      uses: tauri-apps/tauri-action@v0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cd silk-spool
+        npm run tauri build
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
       with:
-        tagName: ${{ github.ref_name }}
-        releaseName: 'Silk Spool ${{ github.ref_name }}'
-        releaseBody: |
-          ## 🎉 Silk Spool ${{ github.ref_name }} - Beta Release
-          
-          This is a beta release of Silk Spool, a beautiful mod manager for Hollow Knight: Silksong!
-          
-          ### ✨ Key Features
-          - **🎮 Automatic Setup**: Smart detection of Hollow Knight: Silksong and BepInEx installations
-          - **📚 Mod Discovery**: Browse mods from multiple repositories with advanced search and filtering
-          - **🔧 Complete Mod Management**: One-click installation and uninstallation with progress tracking
-          - **🎨 Beautiful Interface**: Dark theme with responsive design
-          - **🔔 Real-time Updates**: Live UI updates when mods are installed/uninstalled
-          - **📱 Cross-platform**: Works on Windows and macOS
-          
-          ### 📋 System Requirements
-          - **macOS**: macOS 10.15+ (ARM64 or Intel)
-          - **Windows**: Windows 10+ (x64)
-          - **Hollow Knight: Silksong**: Steam installation
-          - **BepInEx**: Will be detected automatically
-          
-          ### 🐛 Known Issues
-          - Some download hosts may require manual intervention
-          - First launch may take longer due to initial setup
-          - Some mods may require additional dependencies
-          
-          ### 🤝 Feedback
-          This is a beta release! Please report any issues or suggestions on GitHub Issues.
-          
-          **Thank you for trying Silk Spool!** 🎮✨
-        releaseDraft: true
-        prerelease: true
-        includeDebug: false
-        projectPath: silk-spool
+        name: silk-spool-${{ matrix.target }}-${{ github.ref_name }}
+        path: |
+          silk-spool/src-tauri/target/release/bundle/dmg/*.dmg
+          silk-spool/src-tauri/target/release/bundle/msi/*.msi
+          silk-spool/src-tauri/target/release/bundle/macos/*.app
+        retention-days: 30
