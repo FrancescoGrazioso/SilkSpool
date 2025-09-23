@@ -3,7 +3,7 @@
 A beautiful, easy-to-use mod manager for Hollow Knight: Silksong. Find, download, and manage your favorite mods with just a few clicks!
 
 
-![Silk Spool](https://img.shields.io/badge/Version-0.1.4-green)
+![Silk Spool](https://img.shields.io/badge/Version-0.2.0-green)
 ![Status](https://img.shields.io/badge/Status-Beta%20Release-orange)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-blue)
 ![Game](https://img.shields.io/badge/Game-Hollow%20Knight%3A%20Silksong-purple)
@@ -95,7 +95,7 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 ## 🛠️ For Developers
 
 ### Development Status
-**Current Version**: 0.1.4 (Beta Release)
+**Current Version**: 0.2.0 (Beta Release)
 **Current Progress**: 85% Complete (5/8 phases completed, Phase 6 in progress)
 
 **Completed Features:**
@@ -111,7 +111,7 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 - ✅ **Official repository integration** with automatic loading
 - ✅ **Comprehensive testing** (Rust backend + React frontend)
 
-**Recent Completions (v0.1.4):**
+**Recent Completions (v0.2.0):**
 - ✅ **Modular download system** supporting multiple hosts (GitHub, MediaFire, Dropbox, Google Drive)
 - ✅ **Real-time UI updates** with React hooks for installed mod status
 - ✅ **Enhanced error handling** and user feedback systems

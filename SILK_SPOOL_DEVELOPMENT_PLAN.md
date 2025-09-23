@@ -21,9 +21,9 @@
 - ⏳ **Phase 8**: Finalization and Release (PENDING)
 
 **Overall Progress**: 85% (5/8 phases completed, Phase 6 partially completed)
-**Current Version**: 0.1.4 (Beta Release)
+**Current Version**: 0.2.0 (Beta Release)
 
-### Recent Completions (v0.1.4)
+### Recent Completions (v0.2.0)
 - ✅ **Mod Installation System**: Complete download, decompression, and installation workflow
 - ✅ **Mod Uninstallation System**: Complete removal workflow with confirmation dialogs
 - ✅ **Installed Mods Tracking**: Persistent storage and real-time UI updates

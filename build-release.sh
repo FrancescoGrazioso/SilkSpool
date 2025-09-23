@@ -38,7 +38,7 @@ if [ ! -f "silk-spool/package.json" ]; then
 fi
 
 # Create release directory
-RELEASE_DIR="releases/v0.1.4"
+RELEASE_DIR="releases/v0.2.0"
 print_status "Creating release directory: $RELEASE_DIR"
 mkdir -p "$RELEASE_DIR"
 
@@ -67,8 +67,8 @@ fi
 print_status "Copying release files..."
 
 # macOS DMG
-if [ -f "src-tauri/target/release/bundle/dmg/Silk Spool_0.1.4_aarch64.dmg" ]; then
-    cp "src-tauri/target/release/bundle/dmg/Silk Spool_0.1.4_aarch64.dmg" "../$RELEASE_DIR/SilkSpool-0.1.4-macOS-ARM64.dmg"
+if [ -f "src-tauri/target/release/bundle/dmg/Silk Spool_0.2.0_aarch64.dmg" ]; then
+    cp "src-tauri/target/release/bundle/dmg/Silk Spool_0.2.0_aarch64.dmg" "../$RELEASE_DIR/SilkSpool-0.2.0-macOS-ARM64.dmg"
     print_success "macOS ARM64 DMG copied"
 fi
 
@@ -79,19 +79,19 @@ if [ -d "src-tauri/target/release/bundle/macos/Silk Spool.app" ]; then
 fi
 
 # Windows MSI (if available)
-if [ -f "src-tauri/target/release/bundle/msi/Silk Spool_0.1.4_x64_en-US.msi" ]; then
-    cp "src-tauri/target/release/bundle/msi/Silk Spool_0.1.4_x64_en-US.msi" "../$RELEASE_DIR/SilkSpool-0.1.4-Windows-x64.msi"
+if [ -f "src-tauri/target/release/bundle/msi/Silk Spool_0.2.0_x64_en-US.msi" ]; then
+    cp "src-tauri/target/release/bundle/msi/Silk Spool_0.2.0_x64_en-US.msi" "../$RELEASE_DIR/SilkSpool-0.2.0-Windows-x64.msi"
     print_success "Windows MSI copied"
 fi
 
 # Create release notes
 print_status "Creating release notes..."
 cat > "../$RELEASE_DIR/RELEASE_NOTES.md" << EOF
-# Silk Spool v0.1.4 - Beta Release
+# Silk Spool v0.2.0 - Beta Release
 
 ## 🎉 What's New
 
-This is the first beta release of Silk Spool, a beautiful mod manager for Hollow Knight: Silksong!
+This the beta release of Silk Spool, a beautiful mod manager for Hollow Knight: Silksong!
 
 ### ✨ Key Features
 
@@ -105,13 +105,13 @@ This is the first beta release of Silk Spool, a beautiful mod manager for Hollow
 ### 🚀 Installation
 
 #### macOS
-1. Download \`SilkSpool-0.1.4-macOS-ARM64.dmg\`
+1. Download \`SilkSpool-0.2.0-macOS-ARM64.dmg\`
 2. Open the DMG file
 3. Drag Silk Spool to your Applications folder
 4. Launch the app from Applications
 
 #### Windows
-1. Download \`SilkSpool-0.1.4-Windows-x64.msi\`
+1. Download \`SilkSpool-0.2.0-Windows-x64.msi\`
 2. Run the MSI installer
 3. Follow the installation wizard
 4. Launch Silk Spool from Start Menu
@@ -137,7 +137,7 @@ This is a beta release! Please report any issues or suggestions:
 
 ### 📝 Changelog
 
-#### v0.1.4 (Beta Release)
+#### v0.2.0 (Beta Release)
 - Initial beta release
 - Complete mod management system
 - Cross-platform support
@@ -176,7 +176,7 @@ echo "2. Create a GitHub release"
 echo "3. Upload the files to GitHub"
 echo ""
 print_status "To create a GitHub release, run:"
-echo "gh release create v0.1.4 $RELEASE_DIR/* --title 'Silk Spool v0.1.4 - Beta Release' --notes-file $RELEASE_DIR/RELEASE_NOTES.md"
+echo "gh release create v0.2.0 $RELEASE_DIR/* --title 'Silk Spool v0.2.0 - Beta Release' --notes-file $RELEASE_DIR/RELEASE_NOTES.md"
 echo ""
 print_warning "IMPORTANT: Do NOT commit the releases/ directory to Git!"
 echo "Release files should only be uploaded to GitHub Releases, not committed to the repository."
