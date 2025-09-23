@@ -93,5 +93,4 @@ jobs:
         releaseDraft: true
         prerelease: true
         includeDebug: false
-        includeSource: false
-        workingDirectory: silk-spool
+        projectPath: silk-spool
