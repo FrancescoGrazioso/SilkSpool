@@ -1,0 +1,178 @@
+#!/bin/bash
+
+# Silk Spool - Build and Release Script
+# This script builds the application for all platforms and prepares files for GitHub release
+
+set -e  # Exit on any error
+
+echo "🚀 Starting Silk Spool Build Process..."
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_status() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Check if we're in the right directory
+if [ ! -f "silk-spool/package.json" ]; then
+    print_error "Please run this script from the SilkSpool root directory"
+    exit 1
+fi
+
+# Create release directory
+RELEASE_DIR="releases/v0.1.0"
+print_status "Creating release directory: $RELEASE_DIR"
+mkdir -p "$RELEASE_DIR"
+
+# Navigate to the app directory
+cd silk-spool
+
+# Clean previous builds
+print_status "Cleaning previous builds..."
+rm -rf src-tauri/target/release/bundle/
+rm -rf dist/
+
+# Build the application
+print_status "Building Silk Spool for all platforms..."
+npm run tauri build
+
+# Check if build was successful
+if [ $? -eq 0 ]; then
+    print_success "Build completed successfully!"
+else
+    print_error "Build failed!"
+    exit 1
+fi
+
+# Copy release files to release directory
+print_status "Copying release files..."
+
+# macOS DMG
+if [ -f "src-tauri/target/release/bundle/dmg/Silk Spool_0.1.0_aarch64.dmg" ]; then
+    cp "src-tauri/target/release/bundle/dmg/Silk Spool_0.1.0_aarch64.dmg" "../$RELEASE_DIR/SilkSpool-0.1.0-macOS-ARM64.dmg"
+    print_success "macOS ARM64 DMG copied"
+fi
+
+# macOS App Bundle
+if [ -d "src-tauri/target/release/bundle/macos/Silk Spool.app" ]; then
+    cp -r "src-tauri/target/release/bundle/macos/Silk Spool.app" "../$RELEASE_DIR/"
+    print_success "macOS App Bundle copied"
+fi
+
+# Windows MSI (if available)
+if [ -f "src-tauri/target/release/bundle/msi/Silk Spool_0.1.0_x64_en-US.msi" ]; then
+    cp "src-tauri/target/release/bundle/msi/Silk Spool_0.1.0_x64_en-US.msi" "../$RELEASE_DIR/SilkSpool-0.1.0-Windows-x64.msi"
+    print_success "Windows MSI copied"
+fi
+
+# Create release notes
+print_status "Creating release notes..."
+cat > "../$RELEASE_DIR/RELEASE_NOTES.md" << EOF
+# Silk Spool v0.1.0 - Beta Release
+
+## 🎉 What's New
+
+This is the first beta release of Silk Spool, a beautiful mod manager for Hollow Knight: Silksong!
+
+### ✨ Key Features
+
+- **🎮 Automatic Setup**: Smart detection of Hollow Knight: Silksong and BepInEx installations
+- **📚 Mod Discovery**: Browse mods from multiple repositories with advanced search and filtering
+- **🔧 Complete Mod Management**: One-click installation and uninstallation with progress tracking
+- **🎨 Beautiful Interface**: Dark theme with responsive design
+- **🔔 Real-time Updates**: Live UI updates when mods are installed/uninstalled
+- **📱 Cross-platform**: Works on Windows and macOS
+
+### 🚀 Installation
+
+#### macOS
+1. Download \`SilkSpool-0.1.0-macOS-ARM64.dmg\`
+2. Open the DMG file
+3. Drag Silk Spool to your Applications folder
+4. Launch the app from Applications
+
+#### Windows
+1. Download \`SilkSpool-0.1.0-Windows-x64.msi\`
+2. Run the MSI installer
+3. Follow the installation wizard
+4. Launch Silk Spool from Start Menu
+
+### 📋 System Requirements
+
+- **macOS**: macOS 10.15+ (ARM64 or Intel)
+- **Windows**: Windows 10+ (x64)
+- **Hollow Knight: Silksong**: Steam installation
+- **BepInEx**: Will be detected automatically
+
+### 🐛 Known Issues
+
+- Some download hosts may require manual intervention
+- First launch may take longer due to initial setup
+- Some mods may require additional dependencies
+
+### 🤝 Feedback
+
+This is a beta release! Please report any issues or suggestions:
+- GitHub Issues: [Create an issue](https://github.com/FrancescoGrazioso/SilkSpool/issues)
+- Email: [Your email here]
+
+### 📝 Changelog
+
+#### v0.1.0 (Beta Release)
+- Initial beta release
+- Complete mod management system
+- Cross-platform support
+- Official repository integration
+- Real-time UI updates
+- Advanced search and filtering
+
+---
+
+**Thank you for trying Silk Spool!** 🎮✨
+EOF
+
+# Create checksums
+print_status "Creating checksums..."
+cd "../$RELEASE_DIR"
+find . -name "*.dmg" -o -name "*.msi" -o -name "*.app" | while read file; do
+    if [ -f "$file" ]; then
+        shasum -a 256 "$file" > "${file}.sha256"
+        print_success "Created checksum for $file"
+    fi
+done
+
+# Go back to root
+cd ../..
+
+# Display summary
+print_success "🎉 Release build completed!"
+print_status "Release files are in: $RELEASE_DIR"
+echo ""
+print_status "Files created:"
+ls -la "$RELEASE_DIR"
+echo ""
+print_warning "Next steps:"
+echo "1. Test the built applications"
+echo "2. Create a GitHub release"
+echo "3. Upload the files to GitHub"
+echo ""
+print_status "To create a GitHub release, run:"
+echo "gh release create v0.1.0 $RELEASE_DIR/* --title 'Silk Spool v0.1.0 - Beta Release' --notes-file $RELEASE_DIR/RELEASE_NOTES.md"
