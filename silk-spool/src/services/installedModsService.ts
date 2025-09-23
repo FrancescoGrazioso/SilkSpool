@@ -60,7 +60,7 @@ class InstalledModsService {
     try {
       const data: InstalledModsData = {
         mods: this.installedMods,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
       await invoke('save_installed_mods_command', { data });
     } catch (error) {
@@ -87,15 +87,15 @@ class InstalledModsService {
       installedAt: new Date().toISOString(),
       installedFiles,
       gamePath,
-      downloadUrl
+      downloadUrl,
     };
 
     // Remove existing mod with same ID if present
     this.installedMods = this.installedMods.filter(mod => mod.modId !== modId);
-    
+
     // Add new mod
     this.installedMods.push(installedMod);
-    
+
     await this.saveInstalledMods();
     this.notifyListeners();
 

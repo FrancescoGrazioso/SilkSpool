@@ -6,11 +6,11 @@ on:
       tag:
         description: 'Release tag (e.g., v0.1.0)'
         required: true
-        default: 'v0.1.0'
+        default: 'v0.1.4'
       release_name:
         description: 'Release name'
         required: true
-        default: 'Silk Spool v0.1.0 - Beta Release'
+        default: 'Silk Spool v0.1.4 - Beta Release'
       prerelease:
         description: 'Mark as prerelease'
         type: boolean

@@ -24,7 +24,7 @@ class NotificationService {
   private notify(notification: Notification) {
     this.notifications.push(notification);
     this.listeners.forEach(listener => listener(notification));
-    
+
     // Auto-dismiss if duration is set
     if (notification.duration && notification.duration > 0) {
       setTimeout(() => {
@@ -82,12 +82,12 @@ class NotificationService {
   }
 
   progress(title: string, message: string, initialProgress = 0) {
-    return this.show({ 
-      type: 'info', 
-      title, 
-      message, 
+    return this.show({
+      type: 'info',
+      title,
+      message,
       progress: initialProgress,
-      duration: 0 // Don't auto-dismiss progress notifications
+      duration: 0, // Don't auto-dismiss progress notifications
     });
   }
 }

@@ -19,7 +19,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
   onFiltersChange,
   availableRequirements,
   availableAuthors,
-  className = ""
+  className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({
@@ -27,14 +27,14 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
     authors: [],
     sortBy: 'date',
     sortOrder: 'desc',
-    installedOnly: false
+    installedOnly: false,
   });
 
   const handleRequirementToggle = (requirement: string) => {
     const newRequirements = filters.requirements.includes(requirement)
       ? filters.requirements.filter(r => r !== requirement)
       : [...filters.requirements, requirement];
-    
+
     const newFilters = { ...filters, requirements: newRequirements };
     setFilters(newFilters);
     onFiltersChange(newFilters);
@@ -44,7 +44,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
     const newAuthors = filters.authors.includes(author)
       ? filters.authors.filter(a => a !== author)
       : [...filters.authors, author];
-    
+
     const newFilters = { ...filters, authors: newAuthors };
     setFilters(newFilters);
     onFiltersChange(newFilters);
@@ -74,76 +74,67 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
       authors: [],
       sortBy: 'date',
       sortOrder: 'desc',
-      installedOnly: false
+      installedOnly: false,
     };
     setFilters(newFilters);
     onFiltersChange(newFilters);
   };
 
-  const hasActiveFilters = filters.requirements.length > 0 || filters.authors.length > 0 || filters.installedOnly;
+  const hasActiveFilters =
+    filters.requirements.length > 0 || filters.authors.length > 0 || filters.installedOnly;
 
   return (
     <div className={`relative ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 text-gray-100 px-3 py-2 rounded-lg transition-colors duration-200"
+        className='flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 text-gray-100 px-3 py-2 rounded-lg transition-colors duration-200'
       >
-        <svg
-          className="h-4 w-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
+        <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
           <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            strokeLinecap='round'
+            strokeLinejoin='round'
             strokeWidth={2}
-            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+            d='M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z'
           />
         </svg>
-        <span className="text-sm">Filters</span>
+        <span className='text-sm'>Filters</span>
         {hasActiveFilters && (
-          <span className="bg-primary-600 text-white text-xs px-2 py-1 rounded-full">
+          <span className='bg-primary-600 text-white text-xs px-2 py-1 rounded-full'>
             {filters.requirements.length + filters.authors.length + (filters.installedOnly ? 1 : 0)}
           </span>
         )}
         <svg
           className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+          fill='none'
+          stroke='currentColor'
+          viewBox='0 0 24 24'
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
+          <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
         </svg>
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
-          <div className="p-4 space-y-4">
+        <div className='absolute top-full left-0 mt-1 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50'>
+          <div className='p-4 space-y-4'>
             {/* Installed Filter */}
             <div>
-              <h3 className="text-sm font-medium text-gray-300 mb-2">Status</h3>
-              <label className="flex items-center space-x-2 cursor-pointer">
+              <h3 className='text-sm font-medium text-gray-300 mb-2'>Status</h3>
+              <label className='flex items-center space-x-2 cursor-pointer'>
                 <input
-                  type="checkbox"
+                  type='checkbox'
                   checked={filters.installedOnly}
                   onChange={handleInstalledToggle}
-                  className="rounded border-gray-600 bg-gray-700 text-primary-600 focus:ring-primary-500"
+                  className='rounded border-gray-600 bg-gray-700 text-primary-600 focus:ring-primary-500'
                 />
-                <span className="text-sm text-gray-300">Show only installed mods</span>
+                <span className='text-sm text-gray-300'>Show only installed mods</span>
               </label>
             </div>
 
             {/* Sort Options */}
             <div>
-              <h3 className="text-sm font-medium text-gray-300 mb-2">Sort By</h3>
-              <div className="flex space-x-2">
-                {(['name', 'date', 'relevance'] as const).map((option) => (
+              <h3 className='text-sm font-medium text-gray-300 mb-2'>Sort By</h3>
+              <div className='flex space-x-2'>
+                {(['name', 'date', 'relevance'] as const).map(option => (
                   <button
                     key={option}
                     onClick={() => handleSortChange(option)}
@@ -157,7 +148,7 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                   </button>
                 ))}
               </div>
-              <div className="flex space-x-2 mt-2">
+              <div className='flex space-x-2 mt-2'>
                 <button
                   onClick={() => handleSortOrderChange('asc')}
                   className={`px-3 py-1 rounded text-xs transition-colors ${
@@ -184,20 +175,17 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
             {/* Requirements Filter */}
             {availableRequirements.length > 0 && (
               <div>
-                <h3 className="text-sm font-medium text-gray-300 mb-2">Requirements</h3>
-                <div className="max-h-32 overflow-y-auto space-y-1">
-                  {availableRequirements.map((requirement) => (
-                    <label
-                      key={requirement}
-                      className="flex items-center space-x-2 cursor-pointer"
-                    >
+                <h3 className='text-sm font-medium text-gray-300 mb-2'>Requirements</h3>
+                <div className='max-h-32 overflow-y-auto space-y-1'>
+                  {availableRequirements.map(requirement => (
+                    <label key={requirement} className='flex items-center space-x-2 cursor-pointer'>
                       <input
-                        type="checkbox"
+                        type='checkbox'
                         checked={filters.requirements.includes(requirement)}
                         onChange={() => handleRequirementToggle(requirement)}
-                        className="rounded border-gray-600 bg-gray-700 text-primary-600 focus:ring-primary-500"
+                        className='rounded border-gray-600 bg-gray-700 text-primary-600 focus:ring-primary-500'
                       />
-                      <span className="text-sm text-gray-300">{requirement}</span>
+                      <span className='text-sm text-gray-300'>{requirement}</span>
                     </label>
                   ))}
                 </div>
@@ -207,20 +195,17 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
             {/* Authors Filter */}
             {availableAuthors.length > 0 && (
               <div>
-                <h3 className="text-sm font-medium text-gray-300 mb-2">Authors</h3>
-                <div className="max-h-32 overflow-y-auto space-y-1">
-                  {availableAuthors.map((author) => (
-                    <label
-                      key={author}
-                      className="flex items-center space-x-2 cursor-pointer"
-                    >
+                <h3 className='text-sm font-medium text-gray-300 mb-2'>Authors</h3>
+                <div className='max-h-32 overflow-y-auto space-y-1'>
+                  {availableAuthors.map(author => (
+                    <label key={author} className='flex items-center space-x-2 cursor-pointer'>
                       <input
-                        type="checkbox"
+                        type='checkbox'
                         checked={filters.authors.includes(author)}
                         onChange={() => handleAuthorToggle(author)}
-                        className="rounded border-gray-600 bg-gray-700 text-primary-600 focus:ring-primary-500"
+                        className='rounded border-gray-600 bg-gray-700 text-primary-600 focus:ring-primary-500'
                       />
-                      <span className="text-sm text-gray-300">{author}</span>
+                      <span className='text-sm text-gray-300'>{author}</span>
                     </label>
                   ))}
                 </div>
@@ -229,10 +214,10 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
             {/* Clear Filters */}
             {hasActiveFilters && (
-              <div className="pt-2 border-t border-gray-700">
+              <div className='pt-2 border-t border-gray-700'>
                 <button
                   onClick={clearFilters}
-                  className="w-full text-sm text-primary-400 hover:text-primary-300 py-2"
+                  className='w-full text-sm text-primary-400 hover:text-primary-300 py-2'
                 >
                   Clear All Filters
                 </button>

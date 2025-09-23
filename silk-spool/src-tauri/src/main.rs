@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    silk_spool_lib::run()
+  silk_spool_lib::run()
 }

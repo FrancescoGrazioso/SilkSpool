@@ -58,7 +58,7 @@ export class ImageCacheService {
         url,
         blob,
         timestamp: Date.now(),
-        size
+        size,
       };
 
       this.cache.set(url, cachedImage);
@@ -75,7 +75,7 @@ export class ImageCacheService {
    * Preload images for better performance
    */
   static async preloadImages(urls: string[]): Promise<void> {
-    const promises = urls.map(url => 
+    const promises = urls.map(url =>
       this.getImage(url).catch(error => {
         console.warn(`Failed to preload image ${url}:`, error);
         return null;
@@ -179,11 +179,11 @@ export class ImageCacheService {
    */
   static formatBytes(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
-    
+
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
+
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 }

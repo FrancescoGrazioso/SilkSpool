@@ -11,38 +11,34 @@ interface ModDetailProps {
   className?: string;
 }
 
-export const ModDetail: React.FC<ModDetailProps> = ({
-  mod,
-  gamePath,
-  className = ""
-}) => {
+export const ModDetail: React.FC<ModDetailProps> = ({ mod, gamePath, className = '' }) => {
   const [loadingDownload, setLoadingDownload] = useState<string | null>(null);
   const [loadingHomepage, setLoadingHomepage] = useState(false);
   const [loadingUninstall, setLoadingUninstall] = useState(false);
-  
+
   // Always call hooks at the top level
   const isInstalled = useIsModInstalled(mod?.id || '');
 
   if (!mod) {
     return (
       <div className={`flex flex-col items-center justify-center h-full ${className}`}>
-        <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mb-4">
+        <div className='w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mb-4'>
           <svg
-            className="w-8 h-8 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+            className='w-8 h-8 text-gray-400'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
           >
             <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              strokeLinecap='round'
+              strokeLinejoin='round'
               strokeWidth={2}
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
             />
           </svg>
         </div>
-        <h3 className="text-lg font-semibold text-gray-300 mb-2">Select a Mod</h3>
-        <p className="text-sm text-gray-400 text-center max-w-sm">
+        <h3 className='text-lg font-semibold text-gray-300 mb-2'>Select a Mod</h3>
+        <p className='text-sm text-gray-400 text-center max-w-sm'>
           Choose a mod from the list to view its details, images, and download options.
         </p>
       </div>
@@ -55,7 +51,7 @@ export const ModDetail: React.FC<ModDetailProps> = ({
       return date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
       });
     } catch {
       return dateString;
@@ -70,12 +66,7 @@ export const ModDetail: React.FC<ModDetailProps> = ({
     setLoadingDownload(downloadLabel);
     try {
       // Install the mod using the installer service (notifications are handled by the service)
-      await InstallerService.installMod(
-        downloadUrl,
-        gamePath,
-        mod,
-        downloadLabel
-      );
+      await InstallerService.installMod(downloadUrl, gamePath, mod, downloadLabel);
     } catch (error) {
       console.error('Failed to install mod:', error);
     } finally {
@@ -117,18 +108,18 @@ export const ModDetail: React.FC<ModDetailProps> = ({
   return (
     <div className={`h-full overflow-y-auto ${className}`}>
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-100 mb-2">{mod.title}</h1>
-        
+      <div className='mb-6'>
+        <h1 className='text-2xl font-bold text-gray-100 mb-2'>{mod.title}</h1>
+
         {/* Authors */}
         {mod.authors.length > 0 && (
-          <div className="flex items-center space-x-2 mb-3">
-            <span className="text-sm text-gray-400">by</span>
-            <div className="flex flex-wrap gap-1">
+          <div className='flex items-center space-x-2 mb-3'>
+            <span className='text-sm text-gray-400'>by</span>
+            <div className='flex flex-wrap gap-1'>
               {mod.authors.map((author, index) => (
                 <span
                   key={index}
-                  className="text-sm text-primary-400 hover:text-primary-300 cursor-pointer"
+                  className='text-sm text-primary-400 hover:text-primary-300 cursor-pointer'
                 >
                   {author}
                 </span>
@@ -138,43 +129,40 @@ export const ModDetail: React.FC<ModDetailProps> = ({
         )}
 
         {/* Meta info */}
-        <div className="flex items-center space-x-4 text-sm text-gray-400">
+        <div className='flex items-center space-x-4 text-sm text-gray-400'>
           <span>Updated: {formatDate(mod.updated_at)}</span>
           <span>Game: {mod.game_version}</span>
-          <span>{mod.downloads.length} download{mod.downloads.length !== 1 ? 's' : ''}</span>
+          <span>
+            {mod.downloads.length} download{mod.downloads.length !== 1 ? 's' : ''}
+          </span>
         </div>
       </div>
 
       {/* Images */}
       {mod.images.length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-100 mb-3">Images</h2>
-          <ImageGallery
-            images={mod.images}
-            title={mod.title}
-          />
+        <div className='mb-6'>
+          <h2 className='text-lg font-semibold text-gray-100 mb-3'>Images</h2>
+          <ImageGallery images={mod.images} title={mod.title} />
         </div>
       )}
 
       {/* Description */}
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-100 mb-3">Description</h2>
-        <div className="prose prose-invert max-w-none">
-          <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-            {mod.description}
-          </p>
+      <div className='mb-6'>
+        <h2 className='text-lg font-semibold text-gray-100 mb-3'>Description</h2>
+        <div className='prose prose-invert max-w-none'>
+          <p className='text-gray-300 leading-relaxed whitespace-pre-wrap'>{mod.description}</p>
         </div>
       </div>
 
       {/* Requirements */}
       {mod.requirements.length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-100 mb-3">Requirements</h2>
-          <div className="flex flex-wrap gap-2">
+        <div className='mb-6'>
+          <h2 className='text-lg font-semibold text-gray-100 mb-3'>Requirements</h2>
+          <div className='flex flex-wrap gap-2'>
             {mod.requirements.map((req, index) => (
               <span
                 key={index}
-                className="bg-gray-700 text-gray-200 px-3 py-1 rounded-full text-sm"
+                className='bg-gray-700 text-gray-200 px-3 py-1 rounded-full text-sm'
               >
                 {req}
               </span>
@@ -185,9 +173,9 @@ export const ModDetail: React.FC<ModDetailProps> = ({
 
       {/* Downloads */}
       {mod.downloads.length > 0 && !isInstalled && (
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-100 mb-3">Downloads</h2>
-          <div className="space-y-2">
+        <div className='mb-6'>
+          <h2 className='text-lg font-semibold text-gray-100 mb-3'>Downloads</h2>
+          <div className='space-y-2'>
             {mod.downloads.map((download, index) => {
               const isLoading = loadingDownload === download.label;
               return (
@@ -201,35 +189,30 @@ export const ModDetail: React.FC<ModDetailProps> = ({
                       : 'bg-primary-600 hover:bg-primary-700'
                   } text-white`}
                 >
-                  <span className="font-medium">
+                  <span className='font-medium'>
                     {isLoading ? 'Installing...' : download.label}
                   </span>
                   {isLoading ? (
                     <svg
-                      className="h-5 w-5 animate-spin"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                      className='h-5 w-5 animate-spin'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
                     >
                       <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
                         strokeWidth={2}
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
                       />
                     </svg>
                   ) : (
-                    <svg
-                      className="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                       <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
                         strokeWidth={2}
-                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        d='M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
                       />
                     </svg>
                   )}
@@ -242,45 +225,38 @@ export const ModDetail: React.FC<ModDetailProps> = ({
 
       {/* Uninstall Button */}
       {isInstalled && (
-        <div className="mb-6">
+        <div className='mb-6'>
           <button
             onClick={handleUninstall}
             disabled={loadingUninstall}
             className={`w-full px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-between ${
-              loadingUninstall
-                ? 'bg-red-500 cursor-not-allowed'
-                : 'bg-red-600 hover:bg-red-700'
+              loadingUninstall ? 'bg-red-500 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'
             } text-white`}
           >
-            <span className="font-medium">
+            <span className='font-medium'>
               {loadingUninstall ? 'Uninstalling...' : 'Uninstall Mod'}
             </span>
             {loadingUninstall ? (
               <svg
-                className="h-5 w-5 animate-spin"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                className='h-5 w-5 animate-spin'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
               >
                 <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
                   strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
                 />
               </svg>
             ) : (
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                 <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
                   strokeWidth={2}
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'
                 />
               </svg>
             )}
@@ -290,52 +266,42 @@ export const ModDetail: React.FC<ModDetailProps> = ({
 
       {/* Homepage */}
       {mod.homepage && (
-        <div className="mb-6">
+        <div className='mb-6'>
           <button
             onClick={handleHomepageClick}
             disabled={loadingHomepage}
             className={`w-full px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-between ${
-              loadingHomepage
-                ? 'bg-gray-600 cursor-not-allowed'
-                : 'bg-gray-700 hover:bg-gray-600'
+              loadingHomepage ? 'bg-gray-600 cursor-not-allowed' : 'bg-gray-700 hover:bg-gray-600'
             } text-gray-100`}
           >
-            <span className="font-medium">
-              {loadingHomepage ? 'Opening...' : 'Visit Homepage'}
-            </span>
+            <span className='font-medium'>{loadingHomepage ? 'Opening...' : 'Visit Homepage'}</span>
             {loadingHomepage ? (
               <svg
-                className="h-5 w-5 animate-spin"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                className='h-5 w-5 animate-spin'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
               >
                 <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
                   strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
                 />
               </svg>
             ) : (
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                 <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
                   strokeWidth={2}
-                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  d='M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14'
                 />
               </svg>
             )}
           </button>
         </div>
       )}
-
     </div>
   );
 };

@@ -34,7 +34,7 @@ export class InstallerService {
       if (result.success) {
         // Update progress to completion
         notificationService.updateProgress(notificationId, 100);
-        
+
         // Extract version from download label or use game_version as fallback
         let modVersion = mod.game_version; // Default fallback
         if (downloadLabel) {
@@ -54,7 +54,7 @@ export class InstallerService {
           gamePath,
           downloadUrl
         );
-        
+
         // Dismiss progress notification and show success
         notificationService.dismiss(notificationId);
         notificationService.success(
@@ -74,13 +74,10 @@ export class InstallerService {
       return result;
     } catch (error) {
       console.error('Failed to install mod:', error);
-      
+
       // Dismiss progress notification and show error
       notificationService.dismiss(notificationId);
-      notificationService.error(
-        'Installation Failed',
-        `Failed to install ${mod.title}: ${error}`
-      );
+      notificationService.error('Installation Failed', `Failed to install ${mod.title}: ${error}`);
 
       return {
         success: false,
@@ -93,17 +90,14 @@ export class InstallerService {
   /**
    * Uninstall a mod
    */
-  static async uninstallMod(
-    gamePath: string,
-    mod: Mod
-  ): Promise<InstallResult> {
+  static async uninstallMod(gamePath: string, mod: Mod): Promise<InstallResult> {
     try {
       // Get the installed mod info to find the folder name
       const installedMod = installedModsService.getInstalledMod(mod.id);
       if (!installedMod) {
         throw new Error('Mod not found in installed mods list');
       }
-      
+
       // Use the mod title as folder name (same as installation)
       const result = await invoke<InstallResult>('uninstall_mod_command', {
         gamePath,
@@ -113,7 +107,7 @@ export class InstallerService {
       if (result.success) {
         // Remove from installed mods tracking
         await installedModsService.removeInstalledMod(mod.id);
-        
+
         notificationService.success(
           'Uninstallation Complete',
           `Successfully uninstalled ${mod.title}`,
@@ -158,10 +152,7 @@ export class InstallerService {
   /**
    * Check if a mod is installed
    */
-  static async isModInstalled(
-    gamePath: string,
-    modName: string
-  ): Promise<boolean> {
+  static async isModInstalled(gamePath: string, modName: string): Promise<boolean> {
     try {
       const installedMods = await this.listInstalledMods(gamePath);
       return installedMods.includes(modName);

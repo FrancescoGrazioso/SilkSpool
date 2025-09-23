@@ -1,0 +1,6 @@
+# Clippy configuration for Silk Spool
+# Allow some lints that are too strict for our use case
+avoid-breaking-exported-api = false
+disallowed-names = ["foo", "baz", "toto", "titi", "tata"]
+too-many-arguments-threshold = 10
+type-complexity-threshold = 300

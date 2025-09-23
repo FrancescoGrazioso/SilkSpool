@@ -11,7 +11,7 @@ export class RepositoryService {
     } catch (error) {
       return {
         success: false,
-        error: `Failed to fetch repository: ${error}`
+        error: `Failed to fetch repository: ${error}`,
       };
     }
   }
@@ -114,7 +114,9 @@ export class RepositoryService {
    */
   static async loadOfficialRepository(): Promise<Repository | null> {
     try {
-      const response = await fetch('https://raw.githubusercontent.com/FrancescoGrazioso/SilkSpool-sources/refs/heads/main/silkspool-sources.json');
+      const response = await fetch(
+        'https://raw.githubusercontent.com/FrancescoGrazioso/SilkSpool-sources/refs/heads/main/silkspool-sources.json'
+      );
       if (!response.ok) {
         console.log('Failed to fetch official repository');
         return null;
@@ -134,9 +136,9 @@ export class RepositoryService {
       const cachedRepos = await this.getCachedRepositories();
       const builtInRepo = await this.loadBuiltInRepository();
       const officialRepo = await this.loadOfficialRepository();
-      
+
       const allRepos = [...cachedRepos];
-      
+
       // Add official repository first (highest priority)
       if (officialRepo) {
         allRepos.unshift({
@@ -144,10 +146,10 @@ export class RepositoryService {
           name: officialRepo.name,
           url: 'https://raw.githubusercontent.com/FrancescoGrazioso/SilkSpool-sources/refs/heads/main/silkspool-sources.json',
           version: officialRepo.version,
-          mod_count: officialRepo.mods.length
+          mod_count: officialRepo.mods.length,
         });
       }
-      
+
       // Add built-in repository second (only if it has mods)
       if (builtInRepo && builtInRepo.mods.length > 0) {
         allRepos.unshift({
@@ -155,10 +157,10 @@ export class RepositoryService {
           name: builtInRepo.name,
           url: '/mods.json',
           version: builtInRepo.version,
-          mod_count: builtInRepo.mods.length
+          mod_count: builtInRepo.mods.length,
         });
       }
-      
+
       return allRepos;
     } catch (error) {
       console.error('Failed to get all repositories:', error);
@@ -172,19 +174,19 @@ export class RepositoryService {
   static async getAllMods(): Promise<Mod[]> {
     try {
       const allMods: Mod[] = [];
-      
+
       // Load official repository first (highest priority)
       const officialRepo = await this.loadOfficialRepository();
       if (officialRepo) {
         allMods.push(...officialRepo.mods);
       }
-      
+
       // Load built-in repository second (only if it has mods)
       const builtInRepo = await this.loadBuiltInRepository();
       if (builtInRepo && builtInRepo.mods.length > 0) {
         allMods.push(...builtInRepo.mods);
       }
-      
+
       // Load cached repositories
       const repositories = await this.getCachedRepositories();
       for (const repoInfo of repositories) {
@@ -230,10 +232,11 @@ export class RepositoryService {
       const allMods = await this.getAllMods();
       const lowercaseQuery = query.toLowerCase();
 
-      return allMods.filter(mod => 
-        mod.title.toLowerCase().includes(lowercaseQuery) ||
-        mod.description.toLowerCase().includes(lowercaseQuery) ||
-        mod.authors.some(author => author.toLowerCase().includes(lowercaseQuery))
+      return allMods.filter(
+        mod =>
+          mod.title.toLowerCase().includes(lowercaseQuery) ||
+          mod.description.toLowerCase().includes(lowercaseQuery) ||
+          mod.authors.some(author => author.toLowerCase().includes(lowercaseQuery))
       );
     } catch (error) {
       console.error('Failed to search mods:', error);

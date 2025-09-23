@@ -1,6 +1,6 @@
 [package]
 name = "silk-spool"
-version = "0.1.0"
+version = "0.1.4"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
@@ -36,4 +36,11 @@ chrono = { version = "0.4", features = ["serde"] }
 
 [dev-dependencies]
 tempfile = "3.0"
+
+# Development tools
+[package.metadata.scripts]
+fmt = "cargo fmt --all"
+clippy = "cargo clippy --all-targets --all-features -- -D warnings"
+check = "cargo check --all-targets --all-features"
+test = "cargo test --all-targets --all-features"
 
