@@ -7,8 +7,7 @@ export class RepositoryService {
    */
   static async fetchRepository(url: string): Promise<RepositoryResponse> {
     try {
-      const response = await invoke<RepositoryResponse>('fetch_repository_command', { url });
-      return response;
+      return await invoke<RepositoryResponse>('fetch_repository_command', { url });
     } catch (error) {
       return {
         success: false,
@@ -22,8 +21,7 @@ export class RepositoryService {
    */
   static async getCachedRepositories(): Promise<RepositoryInfo[]> {
     try {
-      const repositories = await invoke<RepositoryInfo[]>('get_cached_repositories_command');
-      return repositories;
+      return await invoke<RepositoryInfo[]>('get_cached_repositories_command');
     } catch (error) {
       console.error('Failed to get cached repositories:', error);
       return [];
@@ -35,8 +33,7 @@ export class RepositoryService {
    */
   static async loadCachedRepository(repoId: string): Promise<Repository | null> {
     try {
-      const repository = await invoke<Repository>('load_cached_repository_command', { repoId });
-      return repository;
+      return await invoke<Repository>('load_cached_repository_command', { repoId });
     } catch (error) {
       console.error(`Failed to load repository ${repoId}:`, error);
       return null;
@@ -105,8 +102,7 @@ export class RepositoryService {
         console.log('No built-in mods.json found');
         return null;
       }
-      const repository = await response.json();
-      return repository;
+      return await response.json();
     } catch (error) {
       console.log('Failed to load built-in repository:', error);
       return null;
@@ -114,16 +110,46 @@ export class RepositoryService {
   }
 
   /**
-   * Get all repositories including built-in
+   * Load the official SilkSpool repository from GitHub
+   */
+  static async loadOfficialRepository(): Promise<Repository | null> {
+    try {
+      const response = await fetch('https://raw.githubusercontent.com/FrancescoGrazioso/SilkSpool-sources/refs/heads/main/silkspool-sources.json');
+      if (!response.ok) {
+        console.log('Failed to fetch official repository');
+        return null;
+      }
+      return await response.json();
+    } catch (error) {
+      console.log('Failed to load official repository:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get all repositories including built-in and official
    */
   static async getAllRepositories(): Promise<RepositoryInfo[]> {
     try {
       const cachedRepos = await this.getCachedRepositories();
       const builtInRepo = await this.loadBuiltInRepository();
+      const officialRepo = await this.loadOfficialRepository();
       
       const allRepos = [...cachedRepos];
       
-      if (builtInRepo) {
+      // Add official repository first (highest priority)
+      if (officialRepo) {
+        allRepos.unshift({
+          id: 'official',
+          name: officialRepo.name,
+          url: 'https://raw.githubusercontent.com/FrancescoGrazioso/SilkSpool-sources/refs/heads/main/silkspool-sources.json',
+          version: officialRepo.version,
+          mod_count: officialRepo.mods.length
+        });
+      }
+      
+      // Add built-in repository second (only if it has mods)
+      if (builtInRepo && builtInRepo.mods.length > 0) {
         allRepos.unshift({
           id: 'built-in',
           name: builtInRepo.name,
@@ -141,15 +167,21 @@ export class RepositoryService {
   }
 
   /**
-   * Get all mods from all repositories including built-in
+   * Get all mods from all repositories including built-in and official
    */
   static async getAllMods(): Promise<Mod[]> {
     try {
       const allMods: Mod[] = [];
       
-      // Load built-in repository first
+      // Load official repository first (highest priority)
+      const officialRepo = await this.loadOfficialRepository();
+      if (officialRepo) {
+        allMods.push(...officialRepo.mods);
+      }
+      
+      // Load built-in repository second (only if it has mods)
       const builtInRepo = await this.loadBuiltInRepository();
-      if (builtInRepo) {
+      if (builtInRepo && builtInRepo.mods.length > 0) {
         allMods.push(...builtInRepo.mods);
       }
       
@@ -174,9 +206,12 @@ export class RepositoryService {
    */
   static async getModsFromRepository(repoId: string): Promise<Mod[]> {
     try {
-      if (repoId === 'built-in') {
-        const repository = await this.loadBuiltInRepository();
+      if (repoId === 'official') {
+        const repository = await this.loadOfficialRepository();
         return repository ? repository.mods : [];
+      } else if (repoId === 'built-in') {
+        const repository = await this.loadBuiltInRepository();
+        return repository && repository.mods.length > 0 ? repository.mods : [];
       } else {
         const repository = await this.loadCachedRepository(repoId);
         return repository ? repository.mods : [];

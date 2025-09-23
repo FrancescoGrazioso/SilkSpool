@@ -22,6 +22,7 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 
 ### 📚 **Mod Discovery**
 - **Browse Mods**: Explore mods from multiple repositories in one place
+- **Official Repository**: Pre-loaded official mod repository with curated content
 - **Advanced Search**: Find exactly what you're looking for with powerful search tools
 - **Smart Filtering**: Filter by repository, requirements, authors, and installation status
 - **Rich Details**: View screenshots, descriptions, and requirements before downloading
@@ -32,7 +33,7 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 - **Intuitive Navigation**: Simple, clean interface that anyone can use
 
 ### 🔧 **Complete Mod Management**
-- **Repository Support**: Add your favorite mod sources with built-in mods included
+- **Repository Support**: Add your favorite mod sources with official and built-in mods included
 - **One-Click Installation**: Download, decompress, and install mods automatically
 - **Smart Uninstallation**: Remove mods completely with confirmation dialogs
 - **Progress Tracking**: Real-time download progress and installation status
@@ -97,7 +98,7 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 
 **Completed Features:**
 - ✅ Game detection and BepInEx validation
-- ✅ Repository management system with built-in mods
+- ✅ Repository management system with official and built-in mods
 - ✅ Modern UI with advanced search and filtering
 - ✅ Cross-platform support (Windows & macOS)
 - ✅ **Mod installation system** with progress tracking
@@ -105,6 +106,7 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 - ✅ **Installed mods tracking** with persistent storage
 - ✅ **Image management** with lazy loading and caching
 - ✅ **Notification system** for user feedback
+- ✅ **Official repository integration** with automatic loading
 - ✅ **Comprehensive testing** (Rust backend + React frontend)
 
 **In Progress:**
@@ -159,7 +161,7 @@ npm run tauri dev
 - ✅ Advanced search and filtering
 - ✅ Image management with lazy loading
 - ✅ Notification system for user feedback
-- ✅ Built-in mods repository system
+- ✅ Built-in and official mods repository system
 
 ### 🔄 Phase 6: Testing and Quality (IN PROGRESS)
 - ✅ Comprehensive testing suite (Rust + React)
@@ -211,6 +213,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Issues**: [GitHub Issues](https://github.com/FrancescoGrazioso/SilkSpool/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/FrancescoGrazioso/SilkSpool/discussions)
 - **Releases**: [GitHub Releases](https://github.com/FrancescoGrazioso/SilkSpool/releases)
+- **Mod Sources**: [SilkSpool Sources Repository](https://github.com/FrancescoGrazioso/SilkSpool-sources)
 
 ---
 

@@ -27,6 +27,13 @@ export const RepoSelector: React.FC<RepoSelectorProps> = ({
     return repositories.reduce((total, repo) => total + repo.mod_count, 0);
   };
 
+  const truncateUrl = (url: string, maxLength: number = 46) => {
+    if (url.length <= maxLength) {
+      return url;
+    }
+    return url.substring(0, maxLength - 3) + '...';
+  };
+
   return (
     <div className={`relative ${className}`}>
       <button
@@ -108,13 +115,18 @@ export const RepoSelector: React.FC<RepoSelectorProps> = ({
                   <div>
                     <div className="font-medium flex items-center space-x-2">
                       <span>{repo.name}</span>
+                      {repo.id === 'official' && (
+                        <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+                          Official
+                        </span>
+                      )}
                       {repo.id === 'built-in' && (
                         <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-full">
                           Built-in
                         </span>
                       )}
                     </div>
-                    <div className="text-xs text-gray-400 truncate">{repo.url}</div>
+                    <div className="text-xs text-gray-400" title={repo.url}>{truncateUrl(repo.url)}</div>
                   </div>
                   <span className="bg-gray-600 text-white text-xs px-2 py-1 rounded-full">
                     {repo.mod_count}
