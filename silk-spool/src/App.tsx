@@ -1,22 +1,22 @@
-import { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
+import { useEffect, useState } from 'react';
 import './App.css';
-import { GameStatus, Mod, RepositoryInfo } from './types';
 import {
-  SearchBar,
-  StatusBar,
-  RepoSelector,
-  ModList,
-  ModDetail,
   AddRepoDialog,
   AdvancedFilters,
+  ModDetail,
+  ModList,
   NotificationContainer,
+  RepoSelector,
+  SearchBar,
+  StatusBar,
 } from './components';
-import { RepositoryService } from './services/repositoryService';
-import { SearchService } from './services/searchService';
+import { FilterOptions } from './components/AdvancedFilters';
 import { ImageCacheService } from './services/imageCacheService';
 import { installedModsService } from './services/installedModsService';
-import { FilterOptions } from './components/AdvancedFilters';
+import { RepositoryService } from './services/repositoryService';
+import { SearchService } from './services/searchService';
+import { GameStatus, Mod, RepositoryInfo } from './types';
 
 function App() {
   const [gameStatus, setGameStatus] = useState<GameStatus>({
@@ -90,7 +90,7 @@ function App() {
     setIsAddRepoDialogOpen(true);
   };
 
-  const handleRepositoryAdded = async (_url: string) => {
+  const handleRepositoryAdded = async () => {
     // Refresh repositories and mods
     await loadRepositories();
     await loadMods(activeRepoId);

@@ -4,7 +4,7 @@ import { RepositoryService } from '../services/repositoryService';
 interface AddRepoDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onRepositoryAdded: (url: string) => void;
+  onRepositoryAdded: () => void;
 }
 
 export const AddRepoDialog: React.FC<AddRepoDialogProps> = ({
@@ -44,7 +44,7 @@ export const AddRepoDialog: React.FC<AddRepoDialogProps> = ({
         const configAdded = await RepositoryService.addRepository(url);
 
         if (configAdded) {
-          onRepositoryAdded(url);
+          onRepositoryAdded();
           setUrl('');
           onClose();
         } else {
