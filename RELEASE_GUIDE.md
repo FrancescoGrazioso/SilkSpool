@@ -67,7 +67,7 @@
 ## 📁 Release File Structure
 
 ```
-releases/
+releases/                                  # ⚠️ NOT committed to Git
 └── v0.1.0/
     ├── SilkSpool-0.1.0-macOS-ARM64.dmg
     ├── SilkSpool-0.1.0-Windows-x64.msi
@@ -76,6 +76,8 @@ releases/
     ├── SilkSpool-0.1.0-macOS-ARM64.dmg.sha256
     └── SilkSpool-0.1.0-Windows-x64.msi.sha256
 ```
+
+**⚠️ IMPORTANT**: The `releases/` directory is in `.gitignore` and should NOT be committed to Git. Release files are only uploaded to GitHub Releases.
 
 ## 🔧 Build Configuration
 

@@ -100,4 +100,16 @@ jspm_packages/
 # Temporary folders
 tmp/
 temp/
-SILK_SPOOL_DEVELOPMENT_PLAN.md
+
+# Release files (should be uploaded to GitHub Releases, not committed)
+releases/
+*.dmg
+*.msi
+*.app
+*.exe
+*.deb
+*.rpm
+*.AppImage
+
+# Development plan (optional, can be committed if needed)
+# SILK_SPOOL_DEVELOPMENT_PLAN.md

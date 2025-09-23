@@ -51,7 +51,8 @@ rm -rf src-tauri/target/release/bundle/
 rm -rf dist/
 
 # Build the application
-print_status "Building Silk Spool for all platforms..."
+print_status "Building Silk Spool for current platform (macOS)..."
+print_warning "Note: Windows MSI can only be built on Windows or via GitHub Actions"
 npm run tauri build
 
 # Check if build was successful
@@ -176,3 +177,6 @@ echo "3. Upload the files to GitHub"
 echo ""
 print_status "To create a GitHub release, run:"
 echo "gh release create v0.1.0 $RELEASE_DIR/* --title 'Silk Spool v0.1.0 - Beta Release' --notes-file $RELEASE_DIR/RELEASE_NOTES.md"
+echo ""
+print_warning "IMPORTANT: Do NOT commit the releases/ directory to Git!"
+echo "Release files should only be uploaded to GitHub Releases, not committed to the repository."
