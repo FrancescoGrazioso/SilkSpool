@@ -9,6 +9,16 @@ use zip::ZipArchive;
 
 use crate::types::InstallResult;
 
+/// File type detection
+#[derive(Debug, Clone, PartialEq)]
+enum FileType {
+  Zip,
+  TarGz,
+  Dll,
+  Directory,
+  Other,
+}
+
 /// Download a file from URL to a temporary location
 pub async fn download_file(url: &str, temp_path: &Path) -> Result<(), String> {
   let response = reqwest::get(url)
@@ -50,6 +60,101 @@ pub async fn download_file(url: &str, temp_path: &Path) -> Result<(), String> {
   }
 
   Ok(())
+}
+
+/// Detect file type based on file content and extension
+fn detect_file_type(file_path: &Path) -> Result<FileType, String> {
+  // First check if it's a directory
+  if file_path.is_dir() {
+    return Ok(FileType::Directory);
+  }
+
+  // Check file extension
+  if let Some(extension) = file_path.extension() {
+    if let Some(ext_str) = extension.to_str() {
+      match ext_str.to_lowercase().as_str() {
+        "dll" => return Ok(FileType::Dll),
+        "zip" => return Ok(FileType::Zip),
+        "gz" => {
+          // Check if it's tar.gz by looking at the filename
+          if let Some(file_name) = file_path.file_name() {
+            if let Some(name_str) = file_name.to_str() {
+              if name_str.contains(".tar.gz") || name_str.contains(".tgz") {
+                return Ok(FileType::TarGz);
+              }
+            }
+          }
+        }
+        _ => {}
+      }
+    }
+  }
+
+  // Try to detect by file content (magic bytes)
+  if let Ok(mut file) = fs::File::open(file_path) {
+    let mut buffer = [0; 4];
+    if let Ok(_) = io::Read::read(&mut file, &mut buffer) {
+      // ZIP files start with PK (0x504B)
+      if buffer[0] == 0x50 && buffer[1] == 0x4B {
+        return Ok(FileType::Zip);
+      }
+      // GZIP files start with 0x1F8B
+      if buffer[0] == 0x1F && buffer[1] == 0x8B {
+        return Ok(FileType::TarGz);
+      }
+    }
+  }
+
+  Ok(FileType::Other)
+}
+
+/// Copy a single file to destination
+fn copy_single_file(source: &Path, dest_dir: &Path, _mod_name: &str) -> Result<Vec<String>, String> {
+  let dest_file = dest_dir.join(source.file_name().unwrap());
+  
+  fs::copy(source, &dest_file)
+    .map_err(|e| format!("Failed to copy file: {}", e))?;
+
+  Ok(vec![dest_file.to_string_lossy().to_string()])
+}
+
+/// Copy a directory recursively to destination
+fn copy_directory(source: &Path, dest_dir: &Path) -> Result<Vec<String>, String> {
+  let mut copied_files = Vec::new();
+  
+  fn copy_recursive(
+    source: &Path,
+    dest: &Path,
+    copied_files: &mut Vec<String>,
+  ) -> Result<(), String> {
+    if source.is_dir() {
+      fs::create_dir_all(dest).map_err(|e| format!("Failed to create directory: {}", e))?;
+      
+      for entry in fs::read_dir(source)
+        .map_err(|e| format!("Failed to read directory: {}", e))?
+      {
+        let entry = entry.map_err(|e| format!("Failed to read directory entry: {}", e))?;
+        let source_path = entry.path();
+        let dest_path = dest.join(entry.file_name());
+        
+        if source_path.is_dir() {
+          copy_recursive(&source_path, &dest_path, copied_files)?;
+        } else {
+          fs::copy(&source_path, &dest_path)
+            .map_err(|e| format!("Failed to copy file: {}", e))?;
+          copied_files.push(dest_path.to_string_lossy().to_string());
+        }
+      }
+    } else {
+      fs::copy(source, dest).map_err(|e| format!("Failed to copy file: {}", e))?;
+      copied_files.push(dest.to_string_lossy().to_string());
+    }
+    
+    Ok(())
+  }
+  
+  copy_recursive(source, dest_dir, &mut copied_files)?;
+  Ok(copied_files)
 }
 
 /// Extract ZIP archive
@@ -150,29 +255,34 @@ fn find_bepinex_plugins_dir(game_path: &Path) -> Result<PathBuf, String> {
   Ok(plugins_dir)
 }
 
-/// Install a mod from a downloaded archive
+/// Install a mod from a downloaded file
 pub async fn install_mod(
   download_url: &str,
   game_path: &Path,
   mod_name: &str,
 ) -> Result<InstallResult, String> {
-  // Create temporary directory for extraction
+  // Create temporary directory for download
   let temp_dir = std::env::temp_dir().join("silk_spool_install");
   fs::create_dir_all(&temp_dir).map_err(|e| format!("Failed to create temp directory: {}", e))?;
 
-  // Determine file extension and create temp file path
+  // Determine file extension from URL for initial naming
   let file_extension = if download_url.contains(".zip") {
     "zip"
   } else if download_url.contains(".tar.gz") || download_url.contains(".tgz") {
     "tar.gz"
+  } else if download_url.contains(".dll") {
+    "dll"
   } else {
-    "zip" // Default to zip
+    "bin" // Generic binary file
   };
 
   let temp_file = temp_dir.join(format!("mod.{}", file_extension));
 
   // Download the file
   download_file(download_url, &temp_file).await?;
+
+  // Detect the actual file type after download
+  let file_type = detect_file_type(&temp_file)?;
 
   // Find BepInEx plugins directory
   let plugins_dir = find_bepinex_plugins_dir(game_path)?;
@@ -185,44 +295,86 @@ pub async fn install_mod(
   }
   fs::create_dir_all(&mod_dir).map_err(|e| format!("Failed to create mod directory: {}", e))?;
 
-  // Extract the archive
-  let extracted_files = match file_extension {
-    "zip" => extract_zip(&temp_file, &mod_dir)?,
-    "tar.gz" => extract_tar_gz(&temp_file, &mod_dir)?,
-    _ => return Err("Unsupported archive format".to_string()),
+  // Process the file based on its detected type
+  let installed_files = match file_type {
+    FileType::Zip => {
+      // Extract ZIP archive
+      extract_zip(&temp_file, &mod_dir)?
+    }
+    FileType::TarGz => {
+      // Extract TAR.GZ archive
+      extract_tar_gz(&temp_file, &mod_dir)?
+    }
+    FileType::Dll => {
+      // Copy DLL file directly to plugins directory (not in subfolder)
+      let dest_file = plugins_dir.join(temp_file.file_name().unwrap());
+      fs::copy(&temp_file, &dest_file)
+        .map_err(|e| format!("Failed to copy DLL file: {}", e))?;
+      vec![dest_file.to_string_lossy().to_string()]
+    }
+    FileType::Directory => {
+      // Copy directory contents
+      copy_directory(&temp_file, &mod_dir)?
+    }
+    FileType::Other => {
+      // For other file types, copy to mod directory
+      copy_single_file(&temp_file, &mod_dir, mod_name)?
+    }
   };
 
   // Clean up temporary files
   let _ = fs::remove_file(&temp_file);
   let _ = fs::remove_dir_all(&temp_dir);
 
+  let message = match file_type {
+    FileType::Zip | FileType::TarGz => format!("Successfully extracted and installed {} files", installed_files.len()),
+    FileType::Dll => "Successfully installed DLL plugin".to_string(),
+    FileType::Directory => format!("Successfully copied directory with {} files", installed_files.len()),
+    FileType::Other => format!("Successfully installed {} files", installed_files.len()),
+  };
+
   Ok(InstallResult {
     success: true,
-    message: format!("Successfully installed {} files", extracted_files.len()),
-    installed_files: extracted_files,
+    message,
+    installed_files,
     mod_folder_name: Some(mod_name.to_string()),
   })
 }
 
-/// Uninstall a mod by removing its directory
+/// Uninstall a mod by removing its directory or files
 pub fn uninstall_mod(game_path: &Path, mod_name: &str) -> Result<InstallResult, String> {
   let plugins_dir = find_bepinex_plugins_dir(game_path)?;
   let mod_dir = plugins_dir.join(mod_name);
 
-  if !mod_dir.exists() {
+  // Check if it's a directory-based mod
+  if mod_dir.exists() {
+    fs::remove_dir_all(&mod_dir).map_err(|e| format!("Failed to remove mod directory: {}", e))?;
+    
     return Ok(InstallResult {
-      success: false,
-      message: "Mod not found".to_string(),
+      success: true,
+      message: "Mod uninstalled successfully".to_string(),
       installed_files: vec![],
       mod_folder_name: Some(mod_name.to_string()),
     });
   }
 
-  fs::remove_dir_all(&mod_dir).map_err(|e| format!("Failed to remove mod directory: {}", e))?;
+  // Check if it's a single DLL file (look for DLL files that might match the mod name)
+  let dll_file = plugins_dir.join(format!("{}.dll", mod_name));
+  if dll_file.exists() {
+    fs::remove_file(&dll_file).map_err(|e| format!("Failed to remove DLL file: {}", e))?;
+    
+    return Ok(InstallResult {
+      success: true,
+      message: "DLL mod uninstalled successfully".to_string(),
+      installed_files: vec![],
+      mod_folder_name: Some(mod_name.to_string()),
+    });
+  }
 
+  // Mod not found
   Ok(InstallResult {
-    success: true,
-    message: "Mod uninstalled successfully".to_string(),
+    success: false,
+    message: "Mod not found".to_string(),
     installed_files: vec![],
     mod_folder_name: Some(mod_name.to_string()),
   })
@@ -237,9 +389,14 @@ pub fn list_installed_mods(game_path: &Path) -> Result<Vec<String>, String> {
   if let Ok(entries) = fs::read_dir(&plugins_dir) {
     for entry in entries {
       if let Ok(entry) = entry {
-        if entry.file_type().map(|ft| ft.is_dir()).unwrap_or(false) {
-          if let Some(name) = entry.file_name().to_str() {
+        if let Some(name) = entry.file_name().to_str() {
+          if entry.file_type().map(|ft| ft.is_dir()).unwrap_or(false) {
+            // Directory-based mod
             mods.push(name.to_string());
+          } else if name.ends_with(".dll") {
+            // Single DLL file mod (remove .dll extension for consistency)
+            let mod_name = name.trim_end_matches(".dll");
+            mods.push(mod_name.to_string());
           }
         }
       }
