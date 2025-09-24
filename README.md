@@ -2,8 +2,7 @@
 
 A beautiful, easy-to-use mod manager for Hollow Knight: Silksong. Find, download, and manage your favorite mods with just a few clicks!
 
-
-![Silk Spool](https://img.shields.io/badge/Version-0.2.0-green)
+![Silk Spool](https://img.shields.io/badge/Version-0.3.0-green)
 ![Status](https://img.shields.io/badge/Status-Beta%20Release-orange)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS-blue)
 ![Game](https://img.shields.io/badge/Game-Hollow%20Knight%3A%20Silksong-purple)
@@ -17,11 +16,13 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 ## ✨ Key Features
 
 ### 🎮 **Automatic Setup**
+
 - **Smart Game Detection**: Automatically finds your Hollow Knight: Silksong installation
 - **BepInEx Integration**: Checks if BepInEx is properly installed and configured
 - **One-Click Setup**: Get started in minutes, not hours
 
 ### 📚 **Mod Discovery**
+
 - **Browse Mods**: Explore mods from multiple repositories in one place
 - **Official Repository**: Pre-loaded official mod repository with curated content
 - **Advanced Search**: Find exactly what you're looking for with powerful search tools
@@ -29,11 +30,13 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 - **Rich Details**: View screenshots, descriptions, and requirements before downloading
 
 ### 🎨 **Beautiful Interface**
+
 - **Dark Theme**: Easy on the eyes during long modding sessions
 - **Responsive Design**: Works perfectly on any screen size
 - **Intuitive Navigation**: Simple, clean interface that anyone can use
 
 ### 🔧 **Complete Mod Management**
+
 - **Repository Support**: Add your favorite mod sources with official and built-in mods included
 - **One-Click Installation**: Download, decompress, and install mods automatically
 - **Smart Uninstallation**: Remove mods completely with confirmation dialogs
@@ -42,6 +45,7 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 - **Status Indicators**: Visual badges and filters to see your installed mods
 
 ### 🔔 **Enhanced User Experience**
+
 - **Notification System**: Real-time feedback on downloads and installations
 - **Error Handling**: Clear error messages and recovery suggestions
 - **Loading States**: Visual feedback during all operations
@@ -50,6 +54,7 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - **Hollow Knight: Silksong** (installed via Steam)
 - **BepInEx** (for modding support)
 - **Windows 10/11** or **macOS 10.15+**
@@ -67,17 +72,20 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 ## 📖 How to Use
 
 ### First Launch
+
 1. Silk Spool will automatically scan for your Hollow Knight: Silksong installation
 2. If found, it will check for BepInEx compatibility
 3. If not found, you can manually select your game folder
 
 ### Adding Mod Repositories
+
 1. Click the **"Add Repository"** button
 2. Enter the URL of a mod repository (JSON format)
 3. Silk Spool will fetch and cache the mod list
 4. Start browsing and downloading mods!
 
 ### Finding and Installing Mods
+
 - Use the **search bar** to find specific mods
 - **Filter by repository** to focus on specific sources
 - **Filter by installed status** to see what you have
@@ -87,6 +95,7 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 - **Click "Uninstall"** to remove installed mods
 
 ### Managing Your Mods
+
 - **View installed mods** with the "Installed" filter
 - **See installation dates** and versions in mod details
 - **Uninstall mods** with a single click and confirmation
@@ -95,10 +104,12 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 ## 🛠️ For Developers
 
 ### Development Status
-**Current Version**: 0.2.0 (Beta Release)
+
+**Current Version**: 0.3.0 (Beta Release)
 **Current Progress**: 85% Complete (5/8 phases completed, Phase 6 in progress)
 
 **Completed Features:**
+
 - ✅ Game detection and BepInEx validation
 - ✅ Repository management system with official and built-in mods
 - ✅ Modern UI with advanced search and filtering
@@ -111,17 +122,20 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 - ✅ **Official repository integration** with automatic loading
 - ✅ **Comprehensive testing** (Rust backend + React frontend)
 
-**Recent Completions (v0.2.0):**
+**Recent Completions (v0.3.0):**
+
 - ✅ **Modular download system** supporting multiple hosts (GitHub, MediaFire, Dropbox, Google Drive)
 - ✅ **Real-time UI updates** with React hooks for installed mod status
 - ✅ **Enhanced error handling** and user feedback systems
 - ✅ **Browser-like download handling** for complex hosting services
 
 **In Progress:**
+
 - 🔄 Linting and formatting setup
 - 🔄 Build and distribution optimization
 
 **Coming Soon:**
+
 - 🔄 Automated builds and installers
 - 🔄 Final polish and public release
 
@@ -130,32 +144,38 @@ Silk Spool is a desktop application that makes modding Hollow Knight: Silksong s
 We welcome contributions from the community! Here's how you can help:
 
 ### For Users
+
 - **Report bugs** or issues you encounter
 - **Suggest new features** that would improve your experience
 - **Share feedback** on the user interface and functionality
 - **Help other users** in discussions and issues
 
 ### For Developers
+
 - **Fork the repository** and create a feature branch
 - **Follow the coding standards** and test your changes
 - **Submit pull requests** with clear descriptions
 - **Help with documentation** and examples
 
 ### Development Setup
+
 If you want to contribute code:
 
 1. **Clone the repository**:
+
 ```bash
 git clone https://github.com/FrancescoGrazioso/SilkSpool.git
 cd SilkSpool/silk-spool
 ```
 
 2. **Install dependencies**:
+
 ```bash
 npm install
 ```
 
 3. **Run in development mode**:
+
 ```bash
 npm run tauri dev
 ```
@@ -163,6 +183,7 @@ npm run tauri dev
 ## 📋 Roadmap
 
 ### ✅ Phase 5: Advanced Features (COMPLETED)
+
 - ✅ Mod installation and management system
 - ✅ Mod uninstallation with confirmation dialogs
 - ✅ Installed mods tracking and persistence
@@ -172,6 +193,7 @@ npm run tauri dev
 - ✅ Built-in and official mods repository system
 
 ### 🔄 Phase 6: Testing and Quality (IN PROGRESS)
+
 - ✅ Comprehensive testing suite (Rust + React)
 - ✅ Performance optimization
 - ✅ Bug fixes and stability improvements
@@ -179,12 +201,14 @@ npm run tauri dev
 - 🔄 Code quality improvements
 
 ### ⏳ Phase 7: Build and Distribution (PENDING)
+
 - ⏳ Automated builds for all platforms
 - ⏳ Installer creation (.msi for Windows, .dmg for macOS)
 - ⏳ Update system implementation
 - ⏳ Release automation
 
 ### ⏳ Phase 8: Finalization and Release (PENDING)
+
 - ⏳ Final polish and optimization
 - ⏳ Documentation completion
 - ⏳ Public release preparation
@@ -222,6 +246,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Discussions**: [GitHub Discussions](https://github.com/FrancescoGrazioso/SilkSpool/discussions)
 - **Releases**: [GitHub Releases](https://github.com/FrancescoGrazioso/SilkSpool/releases)
 - **Mod Sources**: [SilkSpool Sources Repository](https://github.com/FrancescoGrazioso/SilkSpool-sources)
+
+## 📚 Documentation
+
+- **[macOS Gatekeeper Guide](MACOS_GATEKEEPER_GUIDE.md)**: Complete guide for macOS installation issues
+- **[Build and Release Documentation](BUILD_AND_RELEASE_DOCUMENTATION.md)**: Technical documentation for building and releasing the app
+- **[Development Plan](SILK_SPOOL_DEVELOPMENT_PLAN.md)**: Detailed development roadmap and progress
 
 ---
 

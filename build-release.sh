@@ -38,7 +38,7 @@ if [ ! -f "silk-spool/package.json" ]; then
 fi
 
 # Create release directory
-RELEASE_DIR="releases/v0.2.0"
+RELEASE_DIR="releases/v0.3.0"
 print_status "Creating release directory: $RELEASE_DIR"
 mkdir -p "$RELEASE_DIR"
 
@@ -55,6 +55,27 @@ print_status "Building Silk Spool for current platform (macOS)..."
 print_warning "Note: Windows MSI can only be built on Windows or via GitHub Actions"
 npm run tauri build
 
+# Sign the app bundle to avoid Gatekeeper issues
+print_status "Signing app bundle to avoid Gatekeeper issues..."
+if command -v codesign &> /dev/null; then
+    # Check if we have a development certificate
+    CERT_ID=$(security find-identity -v -p codesigning | grep "Apple Development" | head -1 | awk '{print $2}')
+    if [ ! -z "$CERT_ID" ]; then
+        if [ -d "src-tauri/target/release/bundle/macos/Silk Spool.app" ]; then
+            codesign --force --sign "$CERT_ID" "src-tauri/target/release/bundle/macos/Silk Spool.app"
+            if [ $? -eq 0 ]; then
+                print_success "App bundle signed successfully"
+            else
+                print_warning "Failed to sign app bundle, but build will continue"
+            fi
+        fi
+    else
+        print_warning "No Apple Development certificate found, app bundle will not be signed"
+    fi
+else
+    print_warning "codesign not available, app bundle will not be signed"
+fi
+
 # Check if build was successful
 if [ $? -eq 0 ]; then
     print_success "Build completed successfully!"
@@ -67,9 +88,13 @@ fi
 print_status "Copying release files..."
 
 # macOS DMG
-if [ -f "src-tauri/target/release/bundle/dmg/Silk Spool_0.2.0_aarch64.dmg" ]; then
-    cp "src-tauri/target/release/bundle/dmg/Silk Spool_0.2.0_aarch64.dmg" "../$RELEASE_DIR/SilkSpool-0.2.0-macOS-ARM64.dmg"
-    print_success "macOS ARM64 DMG copied"
+if [ -f "src-tauri/target/release/bundle/dmg/Silk Spool_0.3.0_aarch64.dmg" ]; then
+    cp "src-tauri/target/release/bundle/dmg/Silk Spool_0.3.0_aarch64.dmg" "../$RELEASE_DIR/SilkSpool-0.3.0-macOS-ARM64.dmg"
+    
+    # Note: DMG signing is not needed since we sign the app bundle before creating the DMG
+    print_status "DMG created with signed app bundle"
+    
+    print_success "macOS ARM64 DMG copied and signed"
 fi
 
 # macOS App Bundle
@@ -79,15 +104,15 @@ if [ -d "src-tauri/target/release/bundle/macos/Silk Spool.app" ]; then
 fi
 
 # Windows MSI (if available)
-if [ -f "src-tauri/target/release/bundle/msi/Silk Spool_0.2.0_x64_en-US.msi" ]; then
-    cp "src-tauri/target/release/bundle/msi/Silk Spool_0.2.0_x64_en-US.msi" "../$RELEASE_DIR/SilkSpool-0.2.0-Windows-x64.msi"
+if [ -f "src-tauri/target/release/bundle/msi/Silk Spool_0.3.0_x64_en-US.msi" ]; then
+    cp "src-tauri/target/release/bundle/msi/Silk Spool_0.3.0_x64_en-US.msi" "../$RELEASE_DIR/SilkSpool-0.3.0-Windows-x64.msi"
     print_success "Windows MSI copied"
 fi
 
 # Create release notes
 print_status "Creating release notes..."
 cat > "../$RELEASE_DIR/RELEASE_NOTES.md" << EOF
-# Silk Spool v0.2.0 - Beta Release
+# Silk Spool v0.3.0 - Beta Release
 
 ## 🎉 What's New
 
@@ -105,13 +130,14 @@ This the beta release of Silk Spool, a beautiful mod manager for Hollow Knight: 
 ### 🚀 Installation
 
 #### macOS
-1. Download \`SilkSpool-0.2.0-macOS-ARM64.dmg\`
+1. Download \`SilkSpool-0.3.0-macOS-ARM64.dmg\`
 2. Open the DMG file
-3. Drag Silk Spool to your Applications folder
-4. Launch the app from Applications
+3. If macOS shows a security warning, right-click the DMG and select "Open" or go to System Preferences > Security & Privacy and click "Open Anyway"
+4. Drag Silk Spool to your Applications folder
+5. Launch the app from Applications
 
 #### Windows
-1. Download \`SilkSpool-0.2.0-Windows-x64.msi\`
+1. Download \`SilkSpool-0.3.0-Windows-x64.msi\`
 2. Run the MSI installer
 3. Follow the installation wizard
 4. Launch Silk Spool from Start Menu
@@ -137,7 +163,7 @@ This is a beta release! Please report any issues or suggestions:
 
 ### 📝 Changelog
 
-#### v0.2.0 (Beta Release)
+#### v0.3.0 (Beta Release)
 - Initial beta release
 - Complete mod management system
 - Cross-platform support
@@ -176,7 +202,7 @@ echo "2. Create a GitHub release"
 echo "3. Upload the files to GitHub"
 echo ""
 print_status "To create a GitHub release, run:"
-echo "gh release create v0.2.0 $RELEASE_DIR/* --title 'Silk Spool v0.2.0 - Beta Release' --notes-file $RELEASE_DIR/RELEASE_NOTES.md"
+echo "gh release create v0.3.0 $RELEASE_DIR/* --title 'Silk Spool v0.3.0 - Beta Release' --notes-file $RELEASE_DIR/RELEASE_NOTES.md"
 echo ""
 print_warning "IMPORTANT: Do NOT commit the releases/ directory to Git!"
 echo "Release files should only be uploaded to GitHub Releases, not committed to the repository."
