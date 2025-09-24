@@ -42,7 +42,9 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, class
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (!isLightboxOpen) return;
+      if (!isLightboxOpen) {
+        return;
+      }
 
       switch (e.key) {
         case 'Escape':
@@ -63,6 +65,12 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title, class
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
+
+  // Reset selected image index when images change (e.g., when switching mods)
+  useEffect(() => {
+    setSelectedImageIndex(0);
+    setLoadedImages(new Set());
+  }, [images]);
 
   if (!images || images.length === 0) {
     return (

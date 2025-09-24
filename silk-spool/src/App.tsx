@@ -212,7 +212,7 @@ function App() {
           </div>
 
           {/* Mod List */}
-          <div className='flex-1'>
+          <div className='flex-1 min-h-0'>
             {isScanning || isLoadingMods ? (
               <div className='text-center py-8'>
                 <div className='animate-spin w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full mx-auto mb-4'></div>
